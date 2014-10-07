@@ -1,4 +1,4 @@
 pcup
 ====
 
-A ActionScript 3.0 library.
+An ActionScript 3.0 library.
