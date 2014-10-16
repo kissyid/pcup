@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<version app="pcup" ofp="bin-release">
-<build count="1" time="2014-10-07 22:38:02" />
-<release count="1" time="2014-10-07 22:38:02" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><version app="pcup" ofp="bin-release">
+<build count="36" time="2014-10-17 00:40:57"/>
+<release count="1" time="2014-10-07 22:38:02"/>
 </version>

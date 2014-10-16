@@ -2,6 +2,7 @@ package com.pcup.display
 {
     import com.pcup.fw.events.DataEvent;
     import com.pcup.utils.FileUtil;
+    import com.pcup.utils.NumberUtil;
     import com.pcup.utils.QueueLoader;
     
     import flash.display.Bitmap;
@@ -9,36 +10,63 @@ package com.pcup.display
     import flash.events.Event;
     import flash.events.MouseEvent;
     
-    /**
-     * initialize complete (loaded frames)
-     */
-    [Event(name="completea" type="flash.events.Event")]
+    /** initialize complete (loaded frames) */
+    [Event(name="complete" type="flash.events.Event")]
+    /** play over */
+    [Event(name="over" type="flash.events.Event")]
     
     /**
-     * 
      * @author pihao
      * @createTime Sep 16, 2014 10:36:07 PM
      */
     public class SlideFrame extends Sprite
     {
-        public var framesPerPixel:int;
+        public var ppf:int = 1;
+        public var fpf:int = 1;
+        private var _slideEnable:Boolean = true;
+        public var progressBarEnable:Boolean = true;
+        public var loop:Boolean = true;
+        public var reversePlay:Boolean = false;
+        
         protected var mc:SimpleMovieClip;
-        
         private var frames:Vector.<Bitmap>;
+        private var progressBar:ProgressBar;
+        private var playAfterInitComplete:Boolean;
         
-        private var processBar:ProgressBar;
+        private var startF:int;
         private var startX:Number;
-        
+        private var totalFrame:int;
+        private var counter:int;
+
         /**
-         * @param dirURL
-         * @param fpp frame per pixel
+         * ppf & fpf, the smaller the faster.
+         * @param ppf pixels per frame
+         * @param fpf enter-frame per frame
          */
-        public function SlideFrame(dirURL:String, fpp:int = 2)
+        public function SlideFrame(ppf:int = 2, fpf:int = 1)
         {
             super();
-            this.framesPerPixel = Math.max(fpp, 1);
+            this.ppf = Math.max(ppf, this.ppf);
+            this.fpf = Math.max(fpf, this.fpf);
+        }
+        
+        /**
+         * init(load images)
+         * @param dirURL
+         */
+        public function init(dirURL:String, playAfterInitComplete:Boolean = false):void
+        {
+            if (mc) return;
+            
+            this.playAfterInitComplete = playAfterInitComplete;
             
             var urls:Array = FileUtil.getImageURLsInDirectorys([dirURL]);
+            if (urls.length == 0)
+            {
+                this.dispatchEvent(new DataEvent(Event.COMPLETE));
+                return;
+            }
+            
             var l:QueueLoader = new QueueLoader();
             l.addEventListener(DataEvent.COMPLETE_ONE, onOneFramesLoaded);
             l.addEventListener(Event.COMPLETE, onAllFramesLoaded);
@@ -53,14 +81,17 @@ package com.pcup.display
             {
                 frames = new Vector.<Bitmap>;
                 
-                processBar = new ProgressBar();
-                processBar.setCenterByObject(frame);
-                addChild(processBar);
+                if (progressBarEnable)
+                {
+                    progressBar = new ProgressBar();
+                    progressBar.setCenterByObject(frame);
+                    addChild(progressBar);
+                }
             }
             
             addChildAt(frame, 0);
             frames.push(frame);
-            processBar.ratio = e.data.ratio;
+            if (progressBar) progressBar.ratio = e.data.ratio;
         }
         
         protected function onAllFramesLoaded(e:DataEvent):void
@@ -69,12 +100,17 @@ package com.pcup.display
             l.removeEventListener(DataEvent.COMPLETE_ONE, onOneFramesLoaded);
             l.removeEventListener(Event.COMPLETE, onAllFramesLoaded);
             
-            removeChild(processBar);
+            if (progressBar) removeChild(progressBar);
             mc = new SimpleMovieClip(frames);
             addChildAt(mc, 0);
-            mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            totalFrame = mc.totalFrame;
+            
+            if (playAfterInitComplete) play();
+            if (slideEnable) mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            
             this.dispatchEvent(new DataEvent(Event.COMPLETE));
         }
+        
         
         private function onDown(e:MouseEvent):void
         {
@@ -82,13 +118,13 @@ package com.pcup.display
             this.addEventListener(MouseEvent.MOUSE_UP, onUp);
             this.addEventListener(MouseEvent.MOUSE_OUT, onUp);
             
+            startF = mc.currentFrame;
             startX = e.stageX;
         }
         
         protected function onMouseMove(e:MouseEvent):void
         {
-            mc.currentFrame = ((int(startX - e.stageX) / framesPerPixel % mc.totalFrame) + mc.totalFrame) % mc.totalFrame;
-            dispatchEvent(new DataEvent(Event.CHANGE));
+            gotoFrame(Math.floor(startF + (e.stageX - startX) / ppf));
         }
         
         private function onUp(e:MouseEvent):void
@@ -98,8 +134,56 @@ package com.pcup.display
             this.removeEventListener(MouseEvent.MOUSE_OUT, onUp);
         }
         
+        
+        public function play():void
+        {
+            counter = 0;
+            addEventListener(Event.ENTER_FRAME, onFrame);
+        }
+        
+        public function stop():void
+        {
+            removeEventListener(Event.ENTER_FRAME, onFrame);
+        }
+        
+        private function onFrame(e:Event):void
+        {
+            if (counter % fpf == 0)
+            {
+                gotoFrame(mc.currentFrame + (reversePlay ? -1 : 1));
+            }
+            counter++;
+        }
+        
+        
+        public function reset():void
+        {
+            gotoFrame(1);
+        }
+        
+        private function gotoFrame(frame:int):void
+        {
+            var target:int = formatFrame(frame);
+            if (target == mc.currentFrame) return;
+            mc.currentFrame = target;
+            dispatchEvent(new DataEvent(Event.CHANGE));
+            
+            if (mc.currentFrame == totalFrame - 1)
+            {
+                if (!loop && hasEventListener(Event.ENTER_FRAME)) removeEventListener(Event.ENTER_FRAME, onFrame);
+                dispatchEvent(new DataEvent(DataEvent.OVER));
+            }
+        }
+        
+        private function formatFrame(frame:int):int
+        {
+            return loop ? (frame % totalFrame + totalFrame) % totalFrame : NumberUtil.almost(frame, 0, totalFrame - 1);
+        }
+        
         public function dispose():void
         {
+            mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            removeEventListener(Event.ENTER_FRAME, onFrame);
             if (mc)
             {
                 mc.dispose();
@@ -107,18 +191,23 @@ package com.pcup.display
             }
         }
         
-        public function reset():void
-        {
-            mc.currentFrame = 1;
-            dispatchEvent(new DataEvent(Event.CHANGE));
-        }
         
         public function get isReset():Boolean
         {
             return mc.currentFrame == 1;
         }
-        
-        
+
+        public function get slideEnable():Boolean
+        {
+            return _slideEnable;
+        }
+        public function set slideEnable(value:Boolean):void
+        {
+            _slideEnable = value;
+            if (slideEnable) mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            else          mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+        }
+
         
     }
 }

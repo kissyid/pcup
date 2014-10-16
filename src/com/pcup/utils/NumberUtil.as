@@ -16,6 +16,16 @@ package com.pcup.utils
             return obj;
         }
         
+        static public function almost(value:Number, min:Number, max:Number):Number
+        {
+            if (min < max)
+            {
+                if      (value < min) value = min;
+                else if (value > max) value = max;
+            }
+            return value;
+        }
+        
         
     }
 }

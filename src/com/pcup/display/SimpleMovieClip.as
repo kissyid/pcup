@@ -12,7 +12,7 @@ package com.pcup.display
     {
         public var loop:Boolean = true;
         
-        private var _currentFrame:int = 0;
+        private var _currentFrame:int = -1;
         private var frames:Vector.<Bitmap> = null;
         
         public function SimpleMovieClip(frames:Vector.<Bitmap>, loop:Boolean = true)
@@ -47,8 +47,8 @@ package com.pcup.display
         }
         public function set currentFrame(value:int):void
         {
+            if (value < 0 || value > totalFrame - 1 || value == _currentFrame) return;
             _currentFrame = value;
-            
             for (var i:int in frames) 
                 frames[i].visible = i == _currentFrame;
         }

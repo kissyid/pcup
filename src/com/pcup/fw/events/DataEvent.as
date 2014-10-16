@@ -10,6 +10,7 @@ package com.pcup.fw.events
     public class DataEvent extends Event 
     {
         public static const COMPLETE_ONE:String = 'complete_one';
+        public static const OVER:String = 'over';
         
         
         public var data:Object;

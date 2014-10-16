@@ -19,10 +19,12 @@ package com.pcup.display
         {
             super();
             
+            mouseChildren = false;
+            
             lightMode = w <= 0 || h <= 0;
             
             cover = new Shape();
-            cover.graphics.beginFill(0xff0000, .3);
+            cover.graphics.beginFill(0xffffff, .2);
             cover.graphics.drawRect(0, 0, Math.max(w, 1), Math.max(h, 1));
             cover.graphics.endFill();
             addChild(cover);

@@ -102,7 +102,7 @@ package com.pcup.fw
         
         protected function loadRes(urls:Array):void
         {
-            setMouseBase(false);
+            mouseBase = false;
             var l:QueueLoader = new QueueLoader();
             l.addEventListener(DataEvent.COMPLETE_ONE, onResLoadedOne);
             l.addEventListener(Event.COMPLETE, onResLoaded);
@@ -118,13 +118,13 @@ package com.pcup.fw
             l.removeEventListener(Event.COMPLETE, onResLoaded);
             l = null;
             res = e.data as Res;
-            setMouseBase(true);
+            mouseBase = true;
         }
         
         
-        public function setMouseBase(enable:Boolean):void
+        public function set mouseBase(value:Boolean):void
         {
-            baseView.mouseEnabled = baseView.mouseChildren = enable;
+            baseView.mouseEnabled = baseView.mouseChildren = value;
         }
         
         public static function get baseView():DisplayObjectContainer

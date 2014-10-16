@@ -1,0 +1,44 @@
+package com.pcup.display
+{
+    import flash.display.DisplayObject;
+    import flash.display.Sprite;
+    
+    
+    /**
+     * 
+     * @author phx
+     * @createTime Oct 12, 2014 3:57:35 AM
+     */
+    public class FaceOff extends Sprite
+    {
+        private var obj0:DisplayObject;
+        private var obj1:DisplayObject;
+
+        public function FaceOff(displayObj0:DisplayObject, displayObj1:DisplayObject, name:String)
+        {
+            super();
+            obj0 = displayObj0;
+            obj1 = displayObj1;
+            this.name = name;
+            
+            mouseChildren = false;
+            
+            obj1.visible = false;
+            addChild(obj0);
+            addChild(obj1);
+        }
+        
+        private var _status:Boolean;
+        public function get active():Boolean
+        {
+            return _status;
+        }
+        public function set active(value:Boolean):void
+        {
+            _status = value;
+            obj0.visible = !value;
+            obj1.visible = value;
+        }
+
+    }
+}

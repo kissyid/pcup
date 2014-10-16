@@ -19,7 +19,7 @@ package com.pcup.utils
         
         static private function getImageURLsInDirecotry(dirURL:String):Array
         {
-            var f:File = new File(File.applicationDirectory.nativePath + "/" + dirURL);
+            var f:File = new File(dirURL);
             if (!f.exists) return [];
             var list:Array = f.getDirectoryListing();
             var urls:Array = [];
@@ -30,13 +30,26 @@ package com.pcup.utils
         
         static public function getSubDirURLs(dirURL:String):Array
         {
-            var f:File = new File(File.applicationDirectory.nativePath + "/" + dirURL);
+            var f:File = new File(dirURL);
             if (!f.exists) return [];
             var list:Array = f.getDirectoryListing();
             var urls:Array = [];
             for each (f in list) if (f.isDirectory)
                 urls.push(dirURL + f.name + "/");
             return urls;
+        }
+        
+        static public function getFileName(url:String):String
+        {
+            var f:File = new File(url);
+            if (!f.exists) return null;
+            return f.name;
+        }
+        static public function getFileExtention(url:String):String
+        {
+            var f:File = new File(url);
+            if (!f.exists) return null;
+            return f.extension;
         }
         
     }
