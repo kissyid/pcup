@@ -12,10 +12,11 @@ package com.pcup.display
      */
     public class Button extends Sprite
     {
+        public static var debug:Boolean
         private var cover:Shape;
         private var lightMode:Boolean;
 
-        public function Button(w:int = 0, h:int = 0)
+        public function Button(w:int = 0, h:int = 0, color:uint = 0xFFFFFF)
         {
             super();
             
@@ -24,7 +25,7 @@ package com.pcup.display
             lightMode = w <= 0 || h <= 0;
             
             cover = new Shape();
-            cover.graphics.beginFill(0xffffff, .2);
+            cover.graphics.beginFill(color, lightMode ? .2 : (debug ? .6 : 0));
             cover.graphics.drawRect(0, 0, Math.max(w, 1), Math.max(h, 1));
             cover.graphics.endFill();
             addChild(cover);

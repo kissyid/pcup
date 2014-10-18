@@ -1,6 +1,7 @@
 package com.pcup.display
 {
     import com.greensock.TweenLite;
+    import com.pcup.fw.events.DataEvent;
     import com.pcup.utils.FileUtil;
     
     import flash.display.Shape;
@@ -8,29 +9,32 @@ package com.pcup.display
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     
+    /** page change */
+    [Event(name="change" type="com.pcup.fw.events.DataEvent")]
     
     /**
-     * 
      * @author phx
      * @createTime Oct 6, 2014 12:38:34 AM
      */
     public class SlidePage extends Sprite
     {
-        static private const SLIDE_MIN:int = 20; // pixel
+        static public var slideMin:int = 20; // pixel
         
         private var urls:Array;
         private var pages:Vector.<Page> = new Vector.<Page>;
-        private var currentPageIndex:int = 0;
-        private var currentPage:Page;
+        private var _currentPage:int = 0;
         
+        private var moveLength:int;
         private var downPageXs:Array;
         private var downMouseX:int;
 
-        public function SlidePage(dirURL:String, viewWidth:uint, viewHeight:uint)
+        public function SlidePage(dirURL:String, viewWidth:uint, viewHeight:uint, gap:int = 20)
         {
             super();
             urls = FileUtil.getImageURLsInDirectorys([dirURL]);
             _viewArea = new Rectangle(0, 0, viewWidth, viewHeight);
+            
+            moveLength = viewArea.width + gap;
             Page.viewArea = viewArea;
             
             var s:Shape = new Shape();
@@ -68,11 +72,11 @@ package com.pcup.display
             stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
             stage.removeEventListener(MouseEvent.ROLL_OUT, onUp);
             
-            if (stage.mouseX - downMouseX < -SLIDE_MIN && currentPageIndex + 1 < urls.length)
+            if (stage.mouseX - downMouseX < -slideMin && currentPage + 1 < urls.length)
             {
                 turnPage(1);
             }
-            else if (stage.mouseX - downMouseX > SLIDE_MIN && currentPageIndex - 1 >= 0)
+            else if (stage.mouseX - downMouseX > slideMin && currentPage - 1 >= 0)
             {
                 turnPage(-1);
             }
@@ -97,41 +101,40 @@ package com.pcup.display
             for (var i:int in pages) 
             {
                 if (i == 0)
-                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - (viewArea.width * offset), onComplete:updatePage, onCompleteParams:[offset]});
+                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - moveLength * offset, onComplete:updatePage, onCompleteParams:[offset]});
                 else
-                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - (viewArea.width * offset)});
+                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - moveLength * offset});
             }
         }
         
         private function updatePage(offset:int):void
         {
-            currentPageIndex += offset;            
+            _currentPage += offset;    
+            dispatchEvent(new DataEvent(DataEvent.CHANGE, currentPage));
             
             if (offset == -1)
             {
-                currentPage = pages[0];
                 if (pages.length > 2)
                 {
                     (removeChild(pages.pop()) as Page).dispose();
                 }
-                if (currentPageIndex - 1 >= 0)
+                if (currentPage - 1 >= 0)
                 {
-                    var page:Page = new Page(urls[currentPageIndex - 1]);
-                    page.x = -viewArea.width;
+                    var page:Page = new Page(urls[currentPage - 1]);
+                    page.x = -moveLength;
                     pages.unshift(addChild(page));
                 }
             }
             else if (offset == 1)
             {
-                currentPage = pages[pages.length - 1];
                 if (pages.length > 2)
                 {
                     (removeChild(pages.shift()) as Page).dispose();
                 }
-                if (currentPageIndex + 1 < urls.length)
+                if (currentPage + 1 < urls.length)
                 {
-                    page = new Page(urls[currentPageIndex + 1]);
-                    page.x = viewArea.width;
+                    page = new Page(urls[currentPage + 1]);
+                    page.x = moveLength;
                     pages.push(addChild(page));
                 }
             }
@@ -142,12 +145,11 @@ package com.pcup.display
         {
             var page:Page = new Page(urls[0]);
             pages.push(addChild(page));
-            currentPage = page;
             
             if (urls.length > 1)
             {
                 page = new Page(urls[1]);
-                page.x = viewArea.width;
+                page.x = moveLength;
                 pages.push(addChild(page));
             }
         }
@@ -172,6 +174,11 @@ package com.pcup.display
             return _viewArea;
         }
         private var _viewArea:Rectangle;
+        
+        public function get currentPage():int
+        {
+            return _currentPage;
+        }
 
         
     }
@@ -185,7 +192,6 @@ import com.pcup.utils.Res;
 
 import flash.display.Bitmap;
 import flash.display.Sprite;
-import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -215,14 +221,14 @@ class Page extends Sprite
         loading = t;
         
         var l:QueueLoader = new QueueLoader();
-        l.addEventListener(Event.COMPLETE, onAllFramesLoaded);
+        l.addEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
         l.load([url]);
     }
     
     private function onAllFramesLoaded(e:DataEvent):void
     {
         var l:QueueLoader = e.target as QueueLoader;
-        l.removeEventListener(Event.COMPLETE, onAllFramesLoaded);
+        l.removeEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
         
         this.graphics.clear();
         this.graphics.beginFill(0, 0);
@@ -235,7 +241,7 @@ class Page extends Sprite
         var bmp:Bitmap = res.getByNamePrefix("")[0];
         if (bmp)
         {
-            NumberUtil.showAll(bmp, viewArea.width * .95, viewArea.height);
+            NumberUtil.showAll(bmp, viewArea.width, viewArea.height);
             bmp.x = viewArea.width - bmp.width >> 1;
             bmp.y = viewArea.height - bmp.height >> 1;
             addChild(bmp);

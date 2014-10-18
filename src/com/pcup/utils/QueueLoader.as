@@ -11,8 +11,8 @@ package com.pcup.utils
     import flash.system.ApplicationDomain;
     import flash.system.LoaderContext;
     
-    [Event(name="complete_one" type="utils.DataEvent")]
-    [Event(name="completea" type="flash.events.Event")]
+    [Event(name="complete_one" type="com.pcup.fw.events.DataEvent")]
+    [Event(name="complete" type="com.pcup.fw.events.DataEvent")]
     
     /**
      * save `e.target.content` in `Res`(Dictionary).

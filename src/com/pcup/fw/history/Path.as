@@ -32,6 +32,19 @@ package com.pcup.fw.history
             return re;
         }
         
+        public function backUntilModule(module:Class):void
+        {
+            while (list.length > 0)
+            {
+                if (last.module == module)
+                {
+                    openLast();
+                    return;
+                }
+                list.pop();
+            }
+        }
+        
         private function openLast():void
         {
             if (last.module.ins) last.module.ins.open();

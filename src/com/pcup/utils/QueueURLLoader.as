@@ -9,8 +9,8 @@ package com.pcup.utils
     import flash.net.URLRequest;
     import com.pcup.fw.events.DataEvent;
     
-    [Event(name="complete_one" type="utils.DataEvent")]
-    [Event(name="completea" type="flash.events.Event")]
+    [Event(name="complete_one" type="com.pcup.fw.events.DataEvent")]
+    [Event(name="complete" type="com.pcup.fw.events.DataEvent")]
     
     /**
      * Save `e.target.data` in `Res` 
@@ -75,7 +75,7 @@ package com.pcup.utils
                 loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
                 loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
                 loader.removeEventListener(Event.COMPLETE, onComplete);
-                this.dispatchEvent(new DataEvent(Event.COMPLETE, res));
+                this.dispatchEvent(new DataEvent(DataEvent.COMPLETE, res));
             }
             else
             {

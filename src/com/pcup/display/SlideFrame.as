@@ -11,9 +11,13 @@ package com.pcup.display
     import flash.events.MouseEvent;
     
     /** initialize complete (loaded frames) */
-    [Event(name="complete" type="flash.events.Event")]
+    [Event(name="init_complete" type="com.pcup.fw.events.DataEvent")]
+    /** frame change */
+    [Event(name="change" type="com.pcup.fw.events.DataEvent")]
     /** play over */
-    [Event(name="over" type="flash.events.Event")]
+    [Event(name="over" type="com.pcup.fw.events.DataEvent")]
+    /** A-B loop start */
+    [Event(name="loop" type="com.pcup.fw.events.DataEvent")]
     
     /**
      * @author pihao
@@ -23,10 +27,12 @@ package com.pcup.display
     {
         public var ppf:int = 1;
         public var fpf:int = 1;
-        private var _slideEnable:Boolean = true;
         public var progressBarEnable:Boolean = true;
         public var loop:Boolean = true;
-        public var reversePlay:Boolean = false;
+        private var _slideEnable:Boolean = true;
+        private var _reversePlay:Boolean = false;
+        private var _abLoop:Array = null;
+        private var _totalFrame:int = 0;
         
         protected var mc:SimpleMovieClip;
         private var frames:Vector.<Bitmap>;
@@ -35,8 +41,9 @@ package com.pcup.display
         
         private var startF:int;
         private var startX:Number;
-        private var totalFrame:int;
         private var counter:int;
+        private var a:int;
+        private var b:int;
 
         /**
          * ppf & fpf, the smaller the faster.
@@ -63,7 +70,7 @@ package com.pcup.display
             var urls:Array = FileUtil.getImageURLsInDirectorys([dirURL]);
             if (urls.length == 0)
             {
-                this.dispatchEvent(new DataEvent(Event.COMPLETE));
+                this.dispatchEvent(new DataEvent(DataEvent.INIT_COMPLETE));
                 return;
             }
             
@@ -77,7 +84,7 @@ package com.pcup.display
         {
             var frame:Bitmap = e.data.content as Bitmap;
             
-            if (!frames)
+            if (!frames) // first frame
             {
                 frames = new Vector.<Bitmap>;
                 
@@ -87,6 +94,11 @@ package com.pcup.display
                     progressBar.setCenterByObject(frame);
                     addChild(progressBar);
                 }
+            }
+            else
+            {
+                frame.x = -frame.width;
+                frame.y = -frame.height;
             }
             
             addChildAt(frame, 0);
@@ -99,16 +111,19 @@ package com.pcup.display
             var l:QueueLoader = e.target as QueueLoader;
             l.removeEventListener(DataEvent.COMPLETE_ONE, onOneFramesLoaded);
             l.removeEventListener(Event.COMPLETE, onAllFramesLoaded);
+            l.removeEventListener(Event.COMPLETE, onAllFramesLoaded);
             
             if (progressBar) removeChild(progressBar);
             mc = new SimpleMovieClip(frames);
             addChildAt(mc, 0);
-            totalFrame = mc.totalFrame;
+            
+            _totalFrame = mc.totalFrame;
+            formatABLoop();
             
             if (playAfterInitComplete) play();
             if (slideEnable) mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
             
-            this.dispatchEvent(new DataEvent(Event.COMPLETE));
+            this.dispatchEvent(new DataEvent(DataEvent.INIT_COMPLETE));
         }
         
         
@@ -164,9 +179,17 @@ package com.pcup.display
         private function gotoFrame(frame:int):void
         {
             var target:int = formatFrame(frame);
+            
             if (target == mc.currentFrame) return;
+            
+            if (abLoop && hasEventListener(Event.ENTER_FRAME))
+            {
+                if (target == b) target = a;
+                if (target == a) dispatchEvent(new DataEvent(DataEvent.LOOP));
+            }
+            
             mc.currentFrame = target;
-            dispatchEvent(new DataEvent(Event.CHANGE));
+            dispatchEvent(new DataEvent(DataEvent.CHANGE, mc.currentFrame));
             
             if (mc.currentFrame == totalFrame - 1)
             {
@@ -175,17 +198,37 @@ package com.pcup.display
             }
         }
         
+        private function formatABLoop():void
+        {
+            if (abLoop)
+            {
+                if (Number(abLoop[0]) == abLoop[0] &&
+                    Number(abLoop[1]) == abLoop[1] &&
+                    NumberUtil.isBetween(abLoop[0], 0, totalFrame - 1) &&
+                    NumberUtil.isBetween(abLoop[1], 0, totalFrame - 1))
+                {
+                    a = reversePlay ? abLoop[1] : abLoop[0];
+                    b = reversePlay ? abLoop[0] : abLoop[1];
+                }
+                else
+                {
+                    abLoop = null;
+                    trace("SlideFrame::abLoop::argument invalid.");
+                }
+            }
+        }
+        
         private function formatFrame(frame:int):int
         {
-            return loop ? (frame % totalFrame + totalFrame) % totalFrame : NumberUtil.almost(frame, 0, totalFrame - 1);
+            return loop ? (frame % totalFrame + totalFrame) % totalFrame : NumberUtil.closest(frame, 0, totalFrame - 1);
         }
         
         public function dispose():void
         {
-            mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
             removeEventListener(Event.ENTER_FRAME, onFrame);
             if (mc)
             {
+                mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
                 mc.dispose();
                 mc = null;
             }
@@ -206,6 +249,42 @@ package com.pcup.display
             _slideEnable = value;
             if (slideEnable) mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
             else          mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+        }
+
+        /** loop between A and B (Only available for play) */
+        public function get abLoop():Array
+        {
+            return _abLoop;
+        }
+        public function set abLoop(value:Array):void
+        {
+            if (value) _abLoop = value;
+            else trace("SlideFrame::abLoop::argument is null.");
+        }
+
+        public function get totalFrame():int
+        {
+            return _totalFrame;
+        }
+        
+        public function get currentFrame():int
+        {
+            return mc.currentFrame;
+        }
+        public function set currentFrame(value:int):void
+        {
+            return gotoFrame(value);
+        }
+
+        public function get reversePlay():Boolean
+        {
+            return _reversePlay;
+        }
+        public function set reversePlay(value:Boolean):void
+        {
+            if (reversePlay == value) return;
+            _reversePlay = value;
+            formatABLoop();
         }
 
         

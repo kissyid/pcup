@@ -24,6 +24,7 @@ package com.pcup.display
             for each (var bmp:Bitmap in frames) 
             {
                 bmp.visible = false;
+                bmp.x = bmp.y = 0;
                 addChild(bmp);
             }
             currentFrame = 0;
