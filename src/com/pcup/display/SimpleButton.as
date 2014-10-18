@@ -1,22 +1,22 @@
 package com.pcup.display
 {
+    import com.pcup.fw.hack.Sprite;
+    
     import flash.display.Shape;
-    import flash.display.Sprite;
     import flash.events.MouseEvent;
     
     
     /**
-     * 
      * @author phx
      * @createTime Sep 27, 2014 9:39:19 PM
      */
-    public class Button extends Sprite
+    public class SimpleButton extends Sprite
     {
         public static var debug:Boolean
         private var cover:Shape;
         private var lightMode:Boolean;
 
-        public function Button(w:int = 0, h:int = 0, color:uint = 0xFFFFFF)
+        public function SimpleButton(w:int = 0, h:int = 0, color:uint = 0xFFFFFF)
         {
             super();
             
@@ -53,15 +53,11 @@ package com.pcup.display
             cover.visible = false;
         }
         
-        public function removeFromParent(dispose:Boolean = false):void
+        override public function dispose():void
         {
-            if (parent) parent.removeChild(this);
-            if (dispose) this.dispose();
-        }
-        
-        public function dispose():void
-        {
+            super.dispose();
             removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
         }
+        
     }
 }

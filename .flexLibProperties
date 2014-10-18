@@ -3,6 +3,8 @@
   <includeClasses>
     <classEntry path="com.pcup.display.FaceOff"/>
     <classEntry path="com.pcup.utils.TimeUtil"/>
+    <classEntry path="com.pcup.fw.hack.EventDispatcher"/>
+    <classEntry path="com.pcup.fw.hack.Sprite"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

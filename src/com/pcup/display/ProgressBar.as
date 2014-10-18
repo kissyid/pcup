@@ -1,12 +1,12 @@
 package com.pcup.display
 {
+    import com.pcup.fw.hack.Sprite;
+    
     import flash.display.DisplayObject;
     import flash.display.Shape;
-    import flash.display.Sprite;
     
     
     /**
-     * 
      * @author phx
      * @createTime Sep 27, 2014 5:01:05 PM
      */

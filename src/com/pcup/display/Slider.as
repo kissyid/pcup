@@ -1,8 +1,9 @@
 package com.pcup.display
 {
+    import com.pcup.fw.hack.Sprite;
+    
     import flash.display.DisplayObject;
     import flash.display.Shape;
-    import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.geom.Point;
@@ -496,11 +497,12 @@ slider.addChild(_content);
             }
         }
         
-        public function dispose():void
+        
+        override public function dispose():void
         {
+            super.dispose();
             removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
         }
-
 
 
         private function updateScrollRect():void
@@ -553,7 +555,6 @@ slider.addChild(_content);
             updateScrollRect();
         }
 
-        
         
         /** 可视区域 */
         public function get viewArea():Rectangle

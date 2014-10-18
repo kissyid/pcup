@@ -1,11 +1,11 @@
 package com.pcup.utils
 {
     import com.pcup.fw.events.DataEvent;
+    import com.pcup.fw.hack.EventDispatcher;
     
     import flash.display.Loader;
     import flash.events.ErrorEvent;
     import flash.events.Event;
-    import flash.events.EventDispatcher;
     import flash.events.IOErrorEvent;
     import flash.net.URLRequest;
     import flash.system.ApplicationDomain;
@@ -23,16 +23,13 @@ package com.pcup.utils
      */
     public class QueueLoader extends EventDispatcher
     {
-        private var loader:Loader;
-        private var currentIndex:int;
-        
-        private var res:Res;
         private var urls:Array;
-        
+        private var currentIndex:int;
+        private var loader:Loader;
+        private var res:Res;
         
         public function QueueLoader()
         {
-            loader = new Loader();
         }
         
         public function load(urls:Array):void
@@ -43,12 +40,14 @@ package com.pcup.utils
                 return;
             }
             
-            this.urls = urls;
-            res = new Res();
-            currentIndex = 0;
+            if (loader) disposeLoaderAndRes();
             
-            loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
-            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+            this.urls = urls;
+            currentIndex = 0;
+            res = new Res();
+            
+            loader = new Loader();
+            addLoaderListener(loader);
             loadOne(urls[currentIndex]);
         }
         
@@ -80,8 +79,7 @@ package com.pcup.utils
             
             if (currentIndex >= urls.length)
             {
-                loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-                loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onComplete);
+                removeLoaderListener(loader);
                 this.dispatchEvent(new DataEvent(Event.COMPLETE, res));
             }
             else
@@ -90,15 +88,35 @@ package com.pcup.utils
             }
         }
         
-        public function dispose():void
+        private function addLoaderListener(l:Loader):void
         {
-            loader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-            loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onComplete);
-            loader.close();
-            loader = null;
-            
-            res.dispose();
-            res = null;
+            l.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
+            l.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+        }
+        private function removeLoaderListener(l:Loader):void
+        {
+            l.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+            l.contentLoaderInfo.removeEventListener(Event.COMPLETE, onComplete);
+        }
+        
+        public function disposeLoaderAndRes():void
+        {
+            if (loader)
+            {
+                removeLoaderListener(loader);
+                loader.unloadAndStop();
+                try {loader.close();} catch(er:Error){}
+                loader = null;
+                
+                res.dispose();
+                res = null;
+            }
+        }
+        
+        override public function dispose():void
+        {
+            super.dispose();
+            disposeLoaderAndRes();
         }
         
     }

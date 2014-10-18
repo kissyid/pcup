@@ -1,18 +1,17 @@
 package com.pcup.fw
 {
     import com.pcup.fw.events.DataEvent;
+    import com.pcup.fw.hack.Sprite;
     import com.pcup.fw.history.Path;
     import com.pcup.utils.QueueLoader;
     import com.pcup.utils.Res;
     
     import flash.display.DisplayObjectContainer;
     import flash.display.Shape;
-    import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.MouseEvent;
     
     /**
-     * 
      * @author pihao
      * @createTime May 3, 2014 10:18:10 PM
      */
@@ -22,20 +21,19 @@ package com.pcup.fw
         public static var stageH:int = 400;
         public static var path:Path = new Path();
         
-        protected var res:Res = null;
-        
         public function View()
         {
             super();
             init();
             addEventListener(Event.ADDED_TO_STAGE, onAddToStage);
         }
-        
         protected function init():void
         {
             addEventListener(MouseEvent.CLICK, onClick);
         }
-        
+        protected function onClick(e:MouseEvent):void
+        {
+        }
         protected function onAddToStage(e:Event):void
         {
             addEventListener(Event.REMOVED_FROM_STAGE, onRemoveFromStage);
@@ -45,87 +43,56 @@ package com.pcup.fw
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemoveFromStage);
         }
         
-        protected function onClick(e:MouseEvent):void
-        {
-        }
         
         public function open():void
         {
             if (baseView) baseView.addChild(this);
             else throw new Error("No baseView!");
         }
-        
-        override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+        override public function dispose():void
         {
-            super.addEventListener(type, listener, useCapture, priority, useWeakReference);
-            
-            if (!listeners) listeners = [];
-            for each (var o:Object in listeners)
-            if (o.type == type && o.listener == listener && o.useCapture == useCapture)
-                return;
-            listeners.push({type:type, listener:listener, useCapture:useCapture});
-        }
-        override public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
-        {
-            super.removeEventListener(type, listener, useCapture);
-            
-            for each (var o:Object in listeners)
-            if (o.type == type && o.listener == listener && o.useCapture == useCapture)
+            super.dispose();
+            if (loader)
             {
-                listeners.splice(listeners.indexOf(o), 1);
-                break;
+                removeLoaderListener(loader);
+                loader.dispose();
+                loader = null;
+                
+                res.dispose();
+                res = null;
             }
         }
-        public function removeEventListeners():void
-        {
-            while (listeners.length > 0)
-            {
-                var o:Object = listeners.pop();
-                this.removeEventListener(o.type, o.listener, o.useCapture);
-            }
-            listeners = null;
-        }
-        private var listeners:Array;
-        
-        public function removeFromParent(dispose:Boolean = false):void
-        {
-            if (parent) parent.removeChild(this);
-            if (dispose) this.dispose();
-        }
-        
-        public function dispose():void
-        {
-            removeEventListeners();
-            if (res) res.dispose();
-        }
         
         
+        private var loader:QueueLoader;
+        protected var res:Res = null;
         protected function loadRes(urls:Array):void
         {
             mouseBase = false;
-            var l:QueueLoader = new QueueLoader();
-            l.addEventListener(DataEvent.COMPLETE_ONE, onResLoadedOne);
-            l.addEventListener(Event.COMPLETE, onResLoaded);
-            l.load(urls);
+            loader = new QueueLoader();
+            addLoaderListener(loader);
+            loader.load(urls);
         }
         protected function onResLoadedOne(e:DataEvent):void
         {
         }
         protected function onResLoaded(e:DataEvent):void
         {
-            var l:QueueLoader = e.target as QueueLoader;
-            l.removeEventListener(DataEvent.COMPLETE_ONE, onResLoadedOne);
-            l.removeEventListener(Event.COMPLETE, onResLoaded);
-            l = null;
+            removeLoaderListener(loader);
             res = e.data as Res;
             mouseBase = true;
         }
-        
-        
-        public function set mouseBase(value:Boolean):void
+        private function addLoaderListener(l:QueueLoader):void
         {
-            baseView.mouseEnabled = baseView.mouseChildren = value;
+            l.addEventListener(DataEvent.COMPLETE_ONE, onResLoadedOne);
+            l.addEventListener(DataEvent.COMPLETE, onResLoaded);
         }
+        private function removeLoaderListener(l:QueueLoader):void
+        {
+            l.removeEventListener(DataEvent.COMPLETE_ONE, onResLoadedOne);
+            l.removeEventListener(DataEvent.COMPLETE, onResLoaded);
+        }
+        
         
         public static function get baseView():DisplayObjectContainer
         {
@@ -146,6 +113,10 @@ package com.pcup.fw
         }
         private static var _baseView:DisplayObjectContainer;
         
+        public function set mouseBase(value:Boolean):void
+        {
+            baseView.mouseEnabled = baseView.mouseChildren = value;
+        }
         
     }
 }

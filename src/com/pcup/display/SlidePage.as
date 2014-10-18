@@ -1,11 +1,11 @@
 package com.pcup.display
 {
     import com.greensock.TweenLite;
+    import com.pcup.fw.hack.Sprite;
     import com.pcup.fw.events.DataEvent;
     import com.pcup.utils.FileUtil;
     
     import flash.display.Shape;
-    import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
     
@@ -163,8 +163,9 @@ package com.pcup.display
             this.mouseEnabled = this.mouseChildren = false;
         }
         
-        public function dispose():void
+        override public function dispose():void
         {
+            super.dispose();
             removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
             while (pages.length > 0) pages.pop().dispose();
         }
@@ -185,13 +186,13 @@ package com.pcup.display
 }
 
 
+import com.pcup.fw.hack.Sprite;
 import com.pcup.fw.events.DataEvent;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
 import com.pcup.utils.Res;
 
 import flash.display.Bitmap;
-import flash.display.Sprite;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -202,8 +203,9 @@ class Page extends Sprite
 {
     public static var viewArea:Rectangle;
     private var loading:TextField;
+    private var loader:QueueLoader;
     private var res:Res;
-    
+
     public function Page(url:String)
     {
         this.graphics.beginFill(0xffffff, .3);
@@ -220,15 +222,14 @@ class Page extends Sprite
         addChild(t);
         loading = t;
         
-        var l:QueueLoader = new QueueLoader();
-        l.addEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
-        l.load([url]);
+        loader = new QueueLoader();
+        loader.addEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
+        loader.load([url]);
     }
     
     private function onAllFramesLoaded(e:DataEvent):void
     {
-        var l:QueueLoader = e.target as QueueLoader;
-        l.removeEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
+        loader.removeEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
         
         this.graphics.clear();
         this.graphics.beginFill(0, 0);
@@ -248,8 +249,11 @@ class Page extends Sprite
         }
     }
     
-    public function dispose():void
+    override public function dispose():void
     {
-        if (res) res.dispose();
+        super.dispose();
+        loader.removeEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
+        loader.dispose();
     }
+    
 }

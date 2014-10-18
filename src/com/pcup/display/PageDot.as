@@ -1,7 +1,8 @@
 package com.pcup.display 
 {
+    import com.pcup.fw.hack.Sprite;
+    
     import flash.display.Shape;
-    import flash.display.Sprite;
     
     /**
      * Apple 翻页点

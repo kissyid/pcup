@@ -1,4 +1,4 @@
-package com.pcup.fw.notice
+package com.pcup.fw.singleNotice
 {
     import com.pcup.fw.events.DataEvent;
     
