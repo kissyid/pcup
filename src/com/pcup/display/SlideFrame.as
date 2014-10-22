@@ -1,7 +1,7 @@
 package com.pcup.display
 {
-    import com.pcup.fw.hack.Sprite;
     import com.pcup.fw.events.DataEvent;
+    import com.pcup.fw.hack.Sprite;
     import com.pcup.utils.FileUtil;
     import com.pcup.utils.NumberUtil;
     import com.pcup.utils.QueueLoader;
@@ -113,7 +113,7 @@ package com.pcup.display
         }
         
         
-        private function onDown(e:MouseEvent):void
+        protected function onDown(e:MouseEvent):void
         {
             this.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             this.addEventListener(MouseEvent.MOUSE_UP, onUp);
@@ -126,7 +126,7 @@ package com.pcup.display
         {
             gotoFrame(Math.floor(startF + (e.stageX - startX) / ppf));
         }
-        private function onUp(e:MouseEvent):void
+        protected function onUp(e:MouseEvent):void
         {
             this.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             this.removeEventListener(MouseEvent.MOUSE_UP, onUp);
@@ -134,10 +134,14 @@ package com.pcup.display
         }
         
         
-        public function play():void
+        public function play(reversePlay:Boolean = false):void
         {
-            counter = 0;
-            addEventListener(Event.ENTER_FRAME, onFrame);
+            this.reversePlay = reversePlay;
+            if (!hasEventListener(Event.ENTER_FRAME))
+            {
+                counter = 0;
+                addEventListener(Event.ENTER_FRAME, onFrame);
+            }
         }
         public function stop():void
         {

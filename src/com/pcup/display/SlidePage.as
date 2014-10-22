@@ -180,6 +180,11 @@ package com.pcup.display
         {
             return _currentPage;
         }
+        
+        public function get pageNum():int
+        {
+            return urls.length;
+        }
 
         
     }

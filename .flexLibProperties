@@ -5,6 +5,7 @@
     <classEntry path="com.pcup.utils.TimeUtil"/>
     <classEntry path="com.pcup.fw.hack.EventDispatcher"/>
     <classEntry path="com.pcup.fw.hack.Sprite"/>
+    <classEntry path="com.pcup.utils.StringUtil"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

@@ -57,7 +57,9 @@ package com.pcup.fw
                 removeLoaderListener(loader);
                 loader.dispose();
                 loader = null;
-                
+            }
+            if (res)
+            {
                 res.dispose();
                 res = null;
             }

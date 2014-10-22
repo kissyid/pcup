@@ -38,7 +38,6 @@ package com.pcup.display
         
         public function active(index:uint):void
         {
-            if (index > dots.length - 1) index = dots.length - 1;
             for (var i:int in dots) 
             {
                 dots[i].alpha = (i == index ? .9 : .3);
