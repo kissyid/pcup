@@ -1,10 +1,11 @@
 package com.pcup.display
 {
     import com.greensock.TweenLite;
-    import com.pcup.fw.hack.Sprite;
     import com.pcup.fw.events.DataEvent;
+    import com.pcup.fw.hack.Sprite;
     import com.pcup.utils.FileUtil;
     
+    import flash.display.BitmapData;
     import flash.display.Shape;
     import flash.events.MouseEvent;
     import flash.geom.Rectangle;
@@ -22,7 +23,8 @@ package com.pcup.display
         
         private var urls:Array;
         private var pages:Vector.<Page> = new Vector.<Page>;
-        private var _currentPage:int = 0;
+        private var _currentPageIndex:int = 0;
+        private var currentPage:Page;
         
         private var moveLength:int;
         private var downPageXs:Array;
@@ -72,11 +74,11 @@ package com.pcup.display
             stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
             stage.removeEventListener(MouseEvent.ROLL_OUT, onUp);
             
-            if (stage.mouseX - downMouseX < -slideMin && currentPage + 1 < urls.length)
+            if (stage.mouseX - downMouseX < -slideMin && currentPageIndex + 1 < urls.length)
             {
                 turnPage(1);
             }
-            else if (stage.mouseX - downMouseX > slideMin && currentPage - 1 >= 0)
+            else if (stage.mouseX - downMouseX > slideMin && currentPageIndex - 1 >= 0)
             {
                 turnPage(-1);
             }
@@ -109,31 +111,33 @@ package com.pcup.display
         
         private function updatePage(offset:int):void
         {
-            _currentPage += offset;    
-            dispatchEvent(new DataEvent(DataEvent.CHANGE, currentPage));
+            _currentPageIndex += offset;    
+            dispatchEvent(new DataEvent(DataEvent.CHANGE, currentPageIndex));
             
             if (offset == -1)
             {
+                currentPage = pages[0];
                 if (pages.length > 2)
                 {
                     (removeChild(pages.pop()) as Page).dispose();
                 }
-                if (currentPage - 1 >= 0)
+                if (currentPageIndex - 1 >= 0)
                 {
-                    var page:Page = new Page(urls[currentPage - 1]);
+                    var page:Page = new Page(urls[currentPageIndex - 1]);
                     page.x = -moveLength;
                     pages.unshift(addChild(page));
                 }
             }
             else if (offset == 1)
             {
+                currentPage = pages[pages.length - 1];
                 if (pages.length > 2)
                 {
                     (removeChild(pages.shift()) as Page).dispose();
                 }
-                if (currentPage + 1 < urls.length)
+                if (currentPageIndex + 1 < urls.length)
                 {
-                    page = new Page(urls[currentPage + 1]);
+                    page = new Page(urls[currentPageIndex + 1]);
                     page.x = moveLength;
                     pages.push(addChild(page));
                 }
@@ -145,6 +149,7 @@ package com.pcup.display
         {
             var page:Page = new Page(urls[0]);
             pages.push(addChild(page));
+            currentPage = page;
             
             if (urls.length > 1)
             {
@@ -176,9 +181,13 @@ package com.pcup.display
         }
         private var _viewArea:Rectangle;
         
-        public function get currentPage():int
+        public function get currentPageIndex():int
         {
-            return _currentPage;
+            return _currentPageIndex;
+        }
+        public function get currentBitmapData():BitmapData
+        {
+            return currentPage.bitmapData;
         }
         
         public function get pageNum():int
@@ -191,13 +200,14 @@ package com.pcup.display
 }
 
 
-import com.pcup.fw.hack.Sprite;
 import com.pcup.fw.events.DataEvent;
+import com.pcup.fw.hack.Sprite;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
 import com.pcup.utils.Res;
 
 import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -210,6 +220,7 @@ class Page extends Sprite
     private var loading:TextField;
     private var loader:QueueLoader;
     private var res:Res;
+    private var _bitmapData:BitmapData = null;
 
     public function Page(url:String)
     {
@@ -251,6 +262,7 @@ class Page extends Sprite
             bmp.x = viewArea.width - bmp.width >> 1;
             bmp.y = viewArea.height - bmp.height >> 1;
             addChild(bmp);
+            _bitmapData = bmp.bitmapData;
         }
     }
     
@@ -259,6 +271,11 @@ class Page extends Sprite
         super.dispose();
         loader.removeEventListener(DataEvent.COMPLETE, onAllFramesLoaded);
         loader.dispose();
+    }
+
+    public function get bitmapData():BitmapData
+    {
+        return _bitmapData;
     }
     
 }
