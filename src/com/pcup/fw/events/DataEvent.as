@@ -9,10 +9,13 @@ package com.pcup.fw.events
      */
     public class DataEvent extends Event 
     {
+        public static const DATA:String = "data";
+        public static const ERROR:String = "error";
+        public static const CHANGE:String = "change";
         public static const COMPLETE:String = "complete";
+        
         public static const COMPLETE_ONE:String = "complete_one";
         public static const INIT_COMPLETE:String = "init_complete";
-        public static const CHANGE:String = "change";
         public static const OVER:String = "over";
         public static const LOOP:String = "loop";
         

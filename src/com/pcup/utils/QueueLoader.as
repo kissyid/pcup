@@ -80,7 +80,7 @@ package com.pcup.utils
             if (currentIndex >= urls.length)
             {
                 removeLoaderListener(loader);
-                this.dispatchEvent(new DataEvent(Event.COMPLETE, res));
+                this.dispatchEvent(new DataEvent(DataEvent.COMPLETE, res));
             }
             else
             {
