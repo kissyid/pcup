@@ -96,10 +96,10 @@ package com.pcup.display
                     addChild(progressBar);
                 }
                 
-                mc.addFrame(frame);
+                mc.addFrame(frame.bitmapData);
                 dispatchChangeEvent();
             }
-            else mc.addFrame(frame);
+            else mc.addFrame(frame.bitmapData);
             
             if (progressBar) progressBar.ratio = e.data.ratio;
         }
@@ -238,7 +238,7 @@ package com.pcup.display
             }
             if (mc)
             {
-                mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+                removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
                 mc.dispose();
                 mc = null;
             }
@@ -278,8 +278,8 @@ package com.pcup.display
             _slideEnable = value;
             if (mc)
             {
-                if (slideEnable) mc.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
-                else          mc.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+                if (slideEnable) addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+                else          removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
             }
         }
 
