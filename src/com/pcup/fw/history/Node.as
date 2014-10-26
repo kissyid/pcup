@@ -9,9 +9,9 @@ package com.pcup.fw.history
     public class Node
     {
         public var module:Class;
-        public var params:Array;
+        public var params:Object;
 
-        public function Node(module:Class, args:Array = null)
+        public function Node(module:Class, args:Object = null)
         {
             this.module = module;
             this.params = args;

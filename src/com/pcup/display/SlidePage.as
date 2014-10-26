@@ -30,7 +30,7 @@ package com.pcup.display
         private var downPageXs:Array;
         private var downMouseX:int;
 
-        public function SlidePage(dirURL:String, viewWidth:uint, viewHeight:uint, gap:int = 20)
+        public function SlidePage(dirURL:String, viewWidth:uint, viewHeight:uint, gap:int = 20, initPageIndex:int = 0)
         {
             super();
             urls = FileUtil.getImageURLsInDirectorys([dirURL]);
@@ -47,8 +47,9 @@ package com.pcup.display
             mask = s;
             
             if (urls.length == 0) return;
-            initPage();
             addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            
+            initPage(initPageIndex);
         }
         
         private function onDown(e:MouseEvent):void
@@ -103,13 +104,12 @@ package com.pcup.display
             for (var i:int in pages) 
             {
                 if (i == 0)
-                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - moveLength * offset, onComplete:updatePage, onCompleteParams:[offset]});
+                    TweenLite.to(pages[i], .2, {x:downPageXs[i] - moveLength * offset, onComplete:updatePageAfterTurn, onCompleteParams:[offset]});
                 else
                     TweenLite.to(pages[i], .2, {x:downPageXs[i] - moveLength * offset});
             }
         }
-        
-        private function updatePage(offset:int):void
+        private function updatePageAfterTurn(offset:int):void
         {
             _currentPageIndex += offset;    
             dispatchEvent(new DataEvent(DataEvent.CHANGE, currentPageIndex));
@@ -145,15 +145,26 @@ package com.pcup.display
             mouseOn();
         }
         
-        private function initPage():void
+        public function initPage(pageIndex:int):void
         {
-            var page:Page = new Page(urls[0]);
+            if (pageIndex < 0 || pageIndex > urls.length - 1) return;
+            
+            disposePages();
+            _currentPageIndex = pageIndex;
+            
+            var page:Page = new Page(urls[currentPageIndex]);
             pages.push(addChild(page));
             currentPage = page;
             
-            if (urls.length > 1)
+            if (currentPageIndex - 1 >= 0)
             {
-                page = new Page(urls[1]);
+                page = new Page(urls[currentPageIndex - 1]);
+                page.x = -moveLength;
+                pages.unshift(addChild(page));
+            }
+            if (currentPageIndex + 1 < urls.length)
+            {
+                page = new Page(urls[currentPageIndex + 1]);
                 page.x = moveLength;
                 pages.push(addChild(page));
             }
@@ -168,11 +179,16 @@ package com.pcup.display
             this.mouseEnabled = this.mouseChildren = false;
         }
         
+        private function disposePages():void
+        {
+            while (pages.length > 0) pages.pop().dispose();
+        }
+        
         override public function dispose():void
         {
             super.dispose();
             removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
-            while (pages.length > 0) pages.pop().dispose();
+            disposePages();
         }
 
         public function get viewArea():Rectangle
