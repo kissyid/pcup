@@ -16,7 +16,7 @@ package com.pcup.display
      * <p>Use this event because the double-click of "MouseEvent" can't use to the "DisplayObjectContainer" which "mouseChilren" is true.</p>
      * @eventType   com.pcup.display.Twotouch.DOUBLE_CLICK
      */
-    [Event(name = "doubleClick", type = "com.pcup.display.ScaleRotateSprite")]
+    [Event(name = "doubleClick", type = "com.pcup.display.TwoTouch")]
     
     
     /**
@@ -25,7 +25,7 @@ package com.pcup.display
      * 
      * @author pihao
      */
-    public class ScaleRotateSprite extends Sprite
+    public class TwoTouch extends Sprite
     {
         /** Define the event type of doubleClick event */
         static public const DOUBLE_CLICK:String = "doubleClick";
@@ -92,7 +92,7 @@ package com.pcup.display
         /**
          * Build a new instance of Twotouch.
          */
-        public function ScaleRotateSprite():void 
+        public function TwoTouch():void 
         {
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
@@ -134,7 +134,7 @@ package com.pcup.display
                 if (Math.abs(e.stageX - clickPoint.x) < doubleDeviation && Math.abs(e.stageY - clickPoint.y) < doubleDeviation)
                 {
                     clickTimer.reset();
-                    dispatchEvent(new Event(ScaleRotateSprite.DOUBLE_CLICK));
+                    dispatchEvent(new Event(TwoTouch.DOUBLE_CLICK));
                     //trace("[Twotouch]double-click....");
                 }
             }
