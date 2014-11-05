@@ -19,6 +19,8 @@ package com.pcup.fw
     {
         public static var stageW:int = 600;
         public static var stageH:int = 400;
+        public static var viewPortW:int = 600;
+        public static var viewPortH:int = 400;
         public static var path:Path = new Path();
         
         public function View()
@@ -66,11 +68,14 @@ package com.pcup.fw
         }
         
         
+        private static var loaderNum:int = 0;
         private var loader:QueueLoader;
         protected var res:Res = null;
         protected function loadRes(urls:Array):void
         {
-            mouseBase = false;
+            if (loaderNum == 0) mouseBase = false;
+            loaderNum++;
+            
             loader = new QueueLoader();
             addLoaderListener(loader);
             loader.load(urls);
@@ -82,7 +87,9 @@ package com.pcup.fw
         {
             removeLoaderListener(loader);
             res = e.data as Res;
-            mouseBase = true;
+            
+            loaderNum--;
+            if (loaderNum == 0) mouseBase = true;
         }
         private function addLoaderListener(l:QueueLoader):void
         {
@@ -108,7 +115,7 @@ package com.pcup.fw
             
             var s:Shape = new Shape();
             s.graphics.beginFill(0);
-            s.graphics.drawRect(0, 0, stageW, stageH);
+            s.graphics.drawRect(0, 0, viewPortW, viewPortH);
             s.graphics.endFill();
             baseView.addChild(s);
             baseView.mask = s;
