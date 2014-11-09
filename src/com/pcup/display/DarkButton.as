@@ -9,7 +9,6 @@ package com.pcup.display
     
     
     /**
-     * 
      * @author pihao
      * @createTime Nov 3, 2014 11:29:54 AM
      */
@@ -19,35 +18,37 @@ package com.pcup.display
         public function DarkButton()
         {
             super();
+            
+            dark = new Bitmap(new BitmapData(1, 1));
+            super.addChild(dark);
+            
             mouseChildren = false;
             addEventListener(MouseEvent.MOUSE_DOWN, onDown);
         }
         
-        public function addBitmap(bitmap:Bitmap):void
+        override protected function afterChildrenUpdated():void
+        {
+            super.afterChildrenUpdated();
+            updateDark();
+        }
+        
+        public function updateDark():void
         {
             disposeDark();
-            addChild(bitmap);
-            
-            var bmd:BitmapData = new BitmapData(bitmap.width, bitmap.height, true, 0);
-            bmd.draw(bitmap, null, new ColorTransform(0, 0, 0, .3));
-            dark = new Bitmap(bmd);
+            var bmd:BitmapData = new BitmapData(this.width, this.height, true, 0);
+            bmd.draw(this, null, new ColorTransform(0, 0, 0, .3));
+            dark.bitmapData = bmd;
+            dark.smoothing = true;
+            dark.width = this.width / this.scaleX;
+            dark.height = this.height / this.scaleY;
             dark.visible = false;
-            addChild(dark);
+            this.setChildIndex(dark, numChildren - 1);
         }
         
         private function onDown(e:MouseEvent):void
         {
             addEventListener(MouseEvent.MOUSE_UP, onUp);
             addEventListener(MouseEvent.ROLL_OUT, onUp);
-            
-            if (!dark)
-            {
-                dark = new Bitmap(new BitmapData(1, 1, true, 0x50000000));
-                dark.visible = false;
-                addChild(dark);
-            }
-            dark.width = this.width / this.scaleX;
-            dark.height = this.height / this.scaleY;
             dark.visible = true;
         }
         

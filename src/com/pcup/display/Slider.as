@@ -4,6 +4,7 @@ package com.pcup.display
     
     import flash.display.DisplayObject;
     import flash.display.Shape;
+    import flash.display.Stage;
     import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.geom.Point;
@@ -54,6 +55,8 @@ slider.addChild(_content);
         static private const DECAY_NORMAL:Number = 0.95;    // 速度衰减率:未溢出
         static private const DECAY_OVER_GO:Number = 0.5;    // 速度衰减率:惯性溢出
         static private const DECAY_OVER_BACK:Number = 0.35; // 速度衰减率:溢出归位
+        
+        private var stg:Stage;
         
         /** 滚动条的最大停靠位置(为提高效率, 故存储于些, 以免每次都运算) */
         private var barMaxPosition:Point;
@@ -124,15 +127,17 @@ slider.addChild(_content);
             this.barEnable = _barEnable;
             this.barW = _barW;
 
-            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+            addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         }
 
-        private function mouseDownHandler(e:MouseEvent):void
+        private function onMouseDown(e:MouseEvent):void
         {
             removeEventListener(Event.ENTER_FRAME, onFrame);
-            stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-            stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-            stage.addEventListener(MouseEvent.ROLL_OUT, onMouseUp);
+            
+            stg = stage;
+            stg.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            stg.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            stg.addEventListener(MouseEvent.ROLL_OUT, onMouseUp);
 
             // 重置参数
             speed.x = 0;
@@ -187,28 +192,28 @@ slider.addChild(_content);
                 c1.y = c0.y + (m1.y - m0.y);
 
                 /**
-                 * 溢出时拖动距离损失一半.
+                 * 溢出时拖动距离损失 2/3.
                  * 溢出情况有三种: 内容可完全显示, 左端溢出, 右端溢出.
                  */
                 if (scrollArea.x > 0 || c1.x > 0)
                 {
-                    if (c0.x > 0 || c0.x < scrollArea.x) c1.x -= (c1.x - c0.x) / 2;       // 开始拖动前已溢出
-                    else                                 c1.x /= 2;                       // 开始拖动前未溢出
+                    if (c0.x > 0 || c0.x < scrollArea.x) c1.x -= (c1.x - c0.x) / 3;       // 开始拖动前已溢出
+                    else                                 c1.x /= 3;                       // 开始拖动前未溢出
                 }
                 else if (c1.x < scrollArea.x)
                 {
-                    if (c0.x > 0 || c0.x < scrollArea.x) c1.x -= (c1.x - c0.x) / 2;
-                    else                                 c1.x -= (c1.x - scrollArea.x) / 2;
+                    if (c0.x > 0 || c0.x < scrollArea.x) c1.x -= (c1.x - c0.x) / 3;
+                    else                                 c1.x -= (c1.x - scrollArea.x) / 3;
                 }
                 if (scrollArea.y > 0 || c1.y > 0)
                 {
-                    if (c0.y > 0 || c0.y < scrollArea.y) c1.y -= (c1.y - c0.y) / 2;
-                    else                                 c1.y /= 2;
+                    if (c0.y > 0 || c0.y < scrollArea.y) c1.y -= (c1.y - c0.y) / 3;
+                    else                                 c1.y /= 3;
                 }
                 else if (c1.y < scrollArea.y)
                 {
-                    if (c0.y > 0 || c0.y < scrollArea.y) c1.y -= (c1.y - c0.y) / 2;
-                    else                                 c1.y -= (c1.y - scrollArea.y) / 2;
+                    if (c0.y > 0 || c0.y < scrollArea.y) c1.y -= (c1.y - c0.y) / 3;
+                    else                                 c1.y -= (c1.y - scrollArea.y) / 3;
                 }
 
                 update();
@@ -217,9 +222,10 @@ slider.addChild(_content);
         
         private function onMouseUp(e:MouseEvent):void
         {
-            stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-            stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-            stage.removeEventListener(MouseEvent.ROLL_OUT, onMouseUp);
+            stg.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+            stg.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            stg.removeEventListener(MouseEvent.ROLL_OUT, onMouseUp);
+            stg = null;
 
             content.mouseChildren = true;
 
@@ -501,7 +507,7 @@ slider.addChild(_content);
         override public function dispose():void
         {
             super.dispose();
-            removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+            removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         }
 
 

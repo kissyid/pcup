@@ -37,6 +37,7 @@ package com.pcup.utils
             if (!urls || urls.length == 0)
             {
                 trace("URLs is null!");
+                this.dispatchEvent(new DataEvent(DataEvent.COMPLETE));
                 return;
             }
             

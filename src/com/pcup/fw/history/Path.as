@@ -1,8 +1,6 @@
 package com.pcup.fw.history
 {
-    
     /**
-     * 
      * @author phx
      * @createTime Sep 28, 2014 3:20:32 AM
      */
@@ -47,8 +45,8 @@ package com.pcup.fw.history
         
         private function openLast():void
         {
-            if (last.module.ins) last.module.ins.open();
-            else (new last.module).open();
+            _lastModuleInstance = last.module.ins ? last.module.ins : (new last.module);
+            lastModuleInstance.open();
         }
         
         public function clear():void
@@ -62,6 +60,12 @@ package com.pcup.fw.history
                 return list[list.length - 1];
             else
                 return null;
+        }
+        
+        private var _lastModuleInstance:Object = null;
+        public function get lastModuleInstance():Object
+        {
+            return _lastModuleInstance;
         }
         
     }

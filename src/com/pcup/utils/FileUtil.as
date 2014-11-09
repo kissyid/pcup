@@ -3,12 +3,16 @@ package com.pcup.utils
     import flash.filesystem.File;
     
     /**
-     * 
      * @author phx
      * @createTime Sep 27, 2014 4:49:32 PM
      */
     public class FileUtil
     {
+        static public function exists(fileURL:String):Boolean
+        {
+            return (new File(fileURL)).exists;
+        }
+        
         static public function getImageURLsInDirectorys(dirURLs:Array):Array
         {
             var arr:Array = [];

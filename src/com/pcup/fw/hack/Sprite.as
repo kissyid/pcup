@@ -1,5 +1,6 @@
 package com.pcup.fw.hack
 {
+    import flash.display.DisplayObject;
     import flash.display.Sprite;
     
     
@@ -14,6 +15,14 @@ package com.pcup.fw.hack
         {
             super();
         }
+        
+        
+        public function removeFromParent(dispose:Boolean = false):void
+        {
+            if (parent) parent.removeChild(this);
+            if (dispose) this.dispose();
+        }
+        
         
         // AUTO REOMVE LISTENER --------------------------------------------- begin
         
@@ -60,11 +69,63 @@ package com.pcup.fw.hack
         // AUTO REOMVE LISTENER --------------------------------------------- end
         
         
-        public function removeFromParent(dispose:Boolean = false):void
+        // OVERRIDE CHILDREN ADD/REMOVE --------------------------------------------- start
+        
+        protected function beforeChildrenUpdated():void
         {
-            if (parent) parent.removeChild(this);
-            if (dispose) this.dispose();
         }
+        protected function afterChildrenUpdated():void
+        {
+        }
+        override public function addChild(child:DisplayObject):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.addChild(child);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function addChildAt(child:DisplayObject, index:int):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.addChildAt(child, index);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function getChildAt(index:int):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.getChildAt(index);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function getChildByName(name:String):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.getChildByName(name);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function getChildIndex(child:DisplayObject):int {
+            beforeChildrenUpdated();
+            var obj:int = super.getChildIndex(child);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function removeChild(child:DisplayObject):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.removeChild(child);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function removeChildAt(index:int):DisplayObject {
+            beforeChildrenUpdated();
+            var obj:DisplayObject = super.removeChildAt(index);
+            afterChildrenUpdated();
+            return obj;
+        }
+        override public function removeChildren(beginIndex:int = 0, endIndex:int = 2147483647):void {
+            beforeChildrenUpdated();
+            super.removeChildren(beginIndex, endIndex);
+            afterChildrenUpdated();
+        }
+        
+        // OVERRIDE CHILDREN ADD/REMOVE --------------------------------------------- end
         
     }
 }

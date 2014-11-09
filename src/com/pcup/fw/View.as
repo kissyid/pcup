@@ -19,8 +19,8 @@ package com.pcup.fw
     {
         public static var stageW:int = 600;
         public static var stageH:int = 400;
-        public static var viewPortW:int = 600;
-        public static var viewPortH:int = 400;
+        public static var viewW:int = 600;
+        public static var viewH:int = 400;
         public static var path:Path = new Path();
         
         public function View()
@@ -115,7 +115,7 @@ package com.pcup.fw
             
             var s:Shape = new Shape();
             s.graphics.beginFill(0);
-            s.graphics.drawRect(0, 0, viewPortW, viewPortH);
+            s.graphics.drawRect(0, 0, viewW, viewH);
             s.graphics.endFill();
             baseView.addChild(s);
             baseView.mask = s;

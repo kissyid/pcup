@@ -6,6 +6,7 @@
     <classEntry path="com.pcup.fw.hack.EventDispatcher"/>
     <classEntry path="com.pcup.fw.hack.Sprite"/>
     <classEntry path="com.pcup.utils.StringUtil"/>
+    <classEntry path="com.pcup.utils.DisplayUtil"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

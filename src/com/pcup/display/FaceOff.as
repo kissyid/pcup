@@ -6,7 +6,6 @@ package com.pcup.display
     
     
     /**
-     * 
      * @author phx
      * @createTime Oct 12, 2014 3:57:35 AM
      */
@@ -15,12 +14,12 @@ package com.pcup.display
         private var obj0:DisplayObject;
         private var obj1:DisplayObject;
 
-        public function FaceOff(displayObj0:DisplayObject, displayObj1:DisplayObject, name:String)
+        public function FaceOff(displayObj0:DisplayObject, displayObj1:DisplayObject, name:String = null)
         {
             super();
             obj0 = displayObj0;
             obj1 = displayObj1;
-            this.name = name;
+            if (name) this.name = name;
             
             mouseChildren = false;
             
@@ -39,6 +38,8 @@ package com.pcup.display
             _status = value;
             obj0.visible = !value;
             obj1.visible = value;
+            
+            if (parent is DarkButton) (parent as DarkButton).updateDark();
         }
 
     }

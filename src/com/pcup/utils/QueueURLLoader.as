@@ -1,7 +1,7 @@
 package com.pcup.utils
 {
-    import com.pcup.fw.hack.EventDispatcher;
     import com.pcup.fw.events.DataEvent;
+    import com.pcup.fw.hack.EventDispatcher;
     
     import flash.events.ErrorEvent;
     import flash.events.Event;
@@ -34,6 +34,7 @@ package com.pcup.utils
             if (!urls || urls.length == 0)
             {
                 trace("URLs is null!");
+                this.dispatchEvent(new DataEvent(DataEvent.COMPLETE));
                 return;
             }
             

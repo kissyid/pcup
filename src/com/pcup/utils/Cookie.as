@@ -19,7 +19,14 @@ package com.pcup.utils
             SharedObject.getLocal(_name, "/");
         }
         
-        static public function add(key:String, value:*):void
+        static public function getData(key:String):*
+        {
+            if (!hasInit) return;
+            var s:SharedObject = SharedObject.getLocal(_name, "/");
+            return s.data[key];
+        }
+        
+        static public function setData(key:String, value:*):void
         {
             if (!hasInit) return;
             var s:SharedObject = SharedObject.getLocal(_name, "/");
@@ -27,19 +34,12 @@ package com.pcup.utils
             flush(s);
         }
         
-        static public function remove(key:String, value:*):void
+        static public function removeData(key:String, value:*):void
         {
             if (!hasInit) return;
             var s:SharedObject = SharedObject.getLocal(_name, "/");
             if (s.data[key]) s.data[key] = null;
             flush(s);
-        }
-        
-        static public function getByKey(key:String):*
-        {
-            if (!hasInit) return;
-            var s:SharedObject = SharedObject.getLocal(_name, "/");
-            return s.data[key];
         }
         
         static public function getAll():Object 
