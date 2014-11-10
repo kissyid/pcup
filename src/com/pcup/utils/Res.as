@@ -52,7 +52,7 @@ package com.pcup.utils
             return arr;
         }
         
-        public function getAll():Array
+        public function get all():Array
         {
             return getByNamePrefix("");
         }

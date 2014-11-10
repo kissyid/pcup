@@ -14,7 +14,10 @@ package com.pcup.utils
     [Event(name="complete" type="com.pcup.fw.events.DataEvent")]
     
     /**
-     * Save `e.target.data` in `Res` 
+     * save data in a Dictionary named res:
+     * key => url
+     * value => e.target.data
+     * 
      * @author phx
      * @createTime May 3, 2014 7:17:26 PM
      */
@@ -51,6 +54,7 @@ package com.pcup.utils
         
         private function loadOne(url:String):void
         {
+            url = FileUtil.tryToRemoveAppDirPrefix(url);
             loader.load(new URLRequest(url));
         }
         

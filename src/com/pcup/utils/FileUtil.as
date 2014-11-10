@@ -8,6 +8,14 @@ package com.pcup.utils
      */
     public class FileUtil
     {
+        /** Useful for Apple device */
+        static public function tryToRemoveAppDirPrefix(fileURL:String):String
+        {
+            var appDirURL:String = File.applicationDirectory.nativePath + "/";
+            if (fileURL.match(appDirURL)) return String(fileURL).substr(appDirURL.length);
+            return fileURL;
+        }
+        
         static public function exists(fileURL:String):Boolean
         {
             return (new File(fileURL)).exists;

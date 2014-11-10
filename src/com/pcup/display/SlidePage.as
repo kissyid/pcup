@@ -218,6 +218,7 @@ package com.pcup.display
 
 import com.pcup.fw.events.DataEvent;
 import com.pcup.fw.hack.Sprite;
+import com.pcup.utils.FileUtil;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
 import com.pcup.utils.Res;
@@ -271,7 +272,7 @@ class Page extends Sprite
         removeChild(loading);
         
         res = e.data as Res;
-        var bmp:Bitmap = res.getByNamePrefix("")[0];
+        var bmp:Bitmap = res.all[0];
         if (bmp)
         {
             NumberUtil.showAll(bmp, viewArea.width, viewArea.height);

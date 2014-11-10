@@ -15,8 +15,9 @@ package com.pcup.utils
     [Event(name="complete" type="com.pcup.fw.events.DataEvent")]
     
     /**
-     * save `e.target.content` in `Res`(Dictionary).
-     * in dictionary, key is file name, value is `e.target.content`.
+     * save data in a Dictionary named res:
+     * key => file name
+     * value => e.target.content
      * 
      * @author phx
      * @createTime May 3, 2014 7:17:26 PM
@@ -54,6 +55,7 @@ package com.pcup.utils
         
         private function loadOne(url:String):void
         {
+            url = FileUtil.tryToRemoveAppDirPrefix(url);
             loader.load(new URLRequest(url), new LoaderContext(false, ApplicationDomain.currentDomain)); 
         }
         
@@ -69,12 +71,9 @@ package com.pcup.utils
         
         private function saveAndNext(data:Object):void
         {
-            var matchs:Array = urls[currentIndex].match(/(?<=\b)[\w]+(?=\.)/);
-            if (matchs)
-            {
-                var fileName:String = matchs[0];
-                res.add(fileName, data);
-            }
+            var matchs:Array = urls[currentIndex].match(/(?<=[\/\\])[\w\+\-\.]+(?=[\.\b])/); // match file name
+            if (matchs) res.add(matchs[0], data);
+            else res.add(urls[currentIndex], data);
             currentIndex++;
             this.dispatchEvent(new DataEvent(DataEvent.COMPLETE_ONE, {ratio:currentIndex / urls.length, content:data}));
             
