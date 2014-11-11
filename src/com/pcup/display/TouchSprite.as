@@ -92,41 +92,26 @@ package com.pcup.display
         }
         private function onTouchMove(e:TouchEvent):void 
         {
+            // Constantly update the stage-coordinate of touch-point
             for (var i:* in touchIds)
-            {
                 if (touchIds[i] == e.touchPointID)
-                {
-                    // Constantly update the stage-coordinate of touch-point
                     touchPoints[i][2] = new Point(e.stageX, e.stageY);
-                    
-                    /**
-                     * Update stage-coordinate and scale/rotate of "this" when the second touch-point appear.
-                     * Otherwise, shaking when the second touch-point appear.
-                     * "i == 0" for update the first touch-point.
-                     */
-                    if (appearUpdate && i == 0)
-                    {
-                        touchPoints[0][1] = new Point(e.stageX, e.stageY);
-                        
-                        tmpScale = scaleX;
-                        tmpRotate = rotation;
-                        
-                        appearUpdate = false;
-                    }
-                    
-                    /** 
-                     * Update stage-coordinate when there is a touch-point leave and the remaining number is one.
-                     * Otherwise, shaking when there is a touch-point leave and the remaining number is one.
-                     */ 
-                    if (leaveUpdate && i == 0)
-                    {
-                        // "i == 0" for update the first touch-point.
-                        touchPoints[0][1] = new Point(e.stageX, e.stageY);
-                        touchPoints[0][0] = globalToLocal(touchPoints[0][1]);
-                        
-                        leaveUpdate = false;
-                    }
-                }
+            
+            // Update data when the second touch-point appear
+            if (appearUpdate)
+            {
+                appearUpdate = false;
+                touchPoints[0][1] = new Point(e.stageX, e.stageY);
+                tmpScale = scaleX;
+                tmpRotate = rotation;
+            }
+            
+            // Update data when there is a touch-point leave
+            if (leaveUpdate)
+            {
+                leaveUpdate = false;
+                touchPoints[0][1] = new Point(e.stageX, e.stageY);
+                touchPoints[0][0] = globalToLocal(touchPoints[0][1]);
             }
             
             if (operateType == DRAG && dragEnable) 
@@ -138,8 +123,8 @@ package com.pcup.display
                 var L1:Number = Math.sqrt(Math.pow(touchPoints[0][1].x - touchPoints[1][1].x, 2) + Math.pow(touchPoints[0][1].y - touchPoints[1][1].y, 2));
                 var L2:Number = Math.sqrt(Math.pow(touchPoints[0][2].x - touchPoints[1][2].x, 2) + Math.pow(touchPoints[0][2].y - touchPoints[1][2].y, 2));
                 var currentScale:Number = tmpScale * (L2 / L1);
-                if      (currentScale > scaleMax) currentScale = scaleMax;
-                else if (currentScale < scaleMin) currentScale = scaleMin;
+                if      (currentScale < scaleMin) currentScale = scaleMin;
+                else if (currentScale > scaleMax) currentScale = scaleMax;
                 scaleX = scaleY = currentScale;
                 
                 if (rotateEnable)
