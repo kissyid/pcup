@@ -71,9 +71,10 @@ package com.pcup.fw
         private static var loaderNum:int = 0;
         private var loader:QueueLoader;
         protected var res:Res = null;
+        protected var enableMouseBaseWhenLoadRes:Boolean = false;
         protected function loadRes(urls:Array):void
         {
-            if (loaderNum == 0) mouseBase = false;
+            if (!enableMouseBaseWhenLoadRes && loaderNum == 0) mouseBase = false;
             loaderNum++;
             
             loader = new QueueLoader();
@@ -89,7 +90,7 @@ package com.pcup.fw
             res = e.data as Res;
             
             loaderNum--;
-            if (loaderNum == 0) mouseBase = true;
+            if (!enableMouseBaseWhenLoadRes && loaderNum == 0) mouseBase = true;
         }
         private function addLoaderListener(l:QueueLoader):void
         {

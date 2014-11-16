@@ -53,6 +53,8 @@ package com.pcup.display
         {
             super.dispose();
             removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
+            removeEventListener(MouseEvent.MOUSE_UP, onUp);
+            removeEventListener(MouseEvent.ROLL_OUT, onUp);
             bitmap.bitmapData.dispose();
         }
         
