@@ -36,7 +36,7 @@ package com.pcup.utils
         {
             if (!urls || urls.length == 0)
             {
-                trace("URLs is null!");
+                trace("[WARNING] URLs is null!");
                 this.dispatchEvent(new DataEvent(DataEvent.COMPLETE));
                 return;
             }
@@ -64,7 +64,7 @@ package com.pcup.utils
         }
         private function onError(e:ErrorEvent):void
         {
-            trace("Resource lost: " + urls[currentIndex]);
+            trace("[WARNING] Resource lost: " + urls[currentIndex]);
             saveAndNext(null);
         }
         

@@ -17,6 +17,11 @@ package com.pcup.display
         public function FaceOff(displayObj0:DisplayObject, displayObj1:DisplayObject, name:String = null)
         {
             super();
+            if (!displayObj0 || !displayObj1)
+            {
+                throw new Error("Parameters can't be null.");
+            }
+            
             obj0 = displayObj0;
             obj1 = displayObj1;
             if (name) this.name = name;

@@ -8,10 +8,13 @@ package com.pcup.utils
      */
     public class FileUtil
     {
-        /** Useful for Apple device */
+        /** Useful for the devices that can't load resouce with File.applicationDirectory prefix. */
         static public function tryToRemoveAppDirPrefix(fileURL:String):String
         {
-            var appDirURL:String = File.applicationDirectory.nativePath + "/";
+            var appDirURL:String;
+            appDirURL = File.applicationDirectory.url;
+            if (fileURL.match(appDirURL)) return String(fileURL).substr(appDirURL.length);
+            appDirURL = File.applicationDirectory.nativePath;
             if (fileURL.match(appDirURL)) return String(fileURL).substr(appDirURL.length);
             return fileURL;
         }
@@ -32,7 +35,11 @@ package com.pcup.utils
         static private function getImageURLsInDirecotry(dirURL:String):Array
         {
             var f:File = new File(dirURL);
-            if (!f.exists) return [];
+            if (!f.exists)
+            {
+                trace("[WARNING] File not exist:", dirURL);
+                return [];
+            }
             var list:Array = f.getDirectoryListing();
             var urls:Array = [];
             for each (f in list) if (f.extension && (f.extension.toLowerCase() == "jpg" || f.extension.toLowerCase() == "png"))
@@ -43,7 +50,11 @@ package com.pcup.utils
         static public function getSubDirURLs(dirURL:String):Array
         {
             var f:File = new File(dirURL);
-            if (!f.exists) return [];
+            if (!f.exists)
+            {
+                trace("[WARNING] File not exist:", dirURL);
+                return [];
+            }
             var list:Array = f.getDirectoryListing();
             var urls:Array = [];
             for each (f in list) if (f.isDirectory)
