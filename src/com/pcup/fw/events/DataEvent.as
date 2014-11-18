@@ -3,7 +3,6 @@ package com.pcup.fw.events
     import flash.events.Event;
     
     /**
-     * 
      * @author pihao
      * @createTime May 3, 2014 6:39:28 PM
      */

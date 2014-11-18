@@ -7,6 +7,8 @@
     <classEntry path="com.pcup.fw.hack.Sprite"/>
     <classEntry path="com.pcup.utils.StringUtil"/>
     <classEntry path="com.pcup.utils.DisplayUtil"/>
+    <classEntry path="com.pcup.fw.events.TouchEvent"/>
+    <classEntry path="com.pcup.fw.errors.SingletonError"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
