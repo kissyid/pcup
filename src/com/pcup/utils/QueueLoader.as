@@ -27,7 +27,7 @@ package com.pcup.utils
         private var urls:Array;
         private var currentIndex:int;
         private var loader:Loader;
-        private var res:Res;
+        private var res:Table;
         
         public function QueueLoader()
         {
@@ -46,7 +46,7 @@ package com.pcup.utils
             
             this.urls = urls;
             currentIndex = 0;
-            res = new Res();
+            res = new Table();
             
             loader = new Loader();
             addLoaderListener(loader);

@@ -4,39 +4,36 @@ package com.pcup.utils
     import flash.utils.Dictionary;
     
     /**
-     * 
-     * @author phx
+     * @author pihao
      * @createTime May 3, 2014 7:42:59 PM
      */
-    public class Res
+    public class Table
     {
         private var dic:Dictionary;
         
-        public function Res()
+        public function Table()
         {
             dic = new Dictionary();
         }
         
-        
-        public function add(name:String, obj:*):void
+        public function add(key:String, value:*):void
         {
-            dic[name] = obj;
+            dic[key] = value;
         }
         
-        public function remove(name:String):void
+        public function remove(key:String):void
         {
-            if (dic[name])
+            if (dic[key])
             {
-                if (dic[name] is Bitmap) dic[name].bitmapData.dispose();
-                if (dic[name].hasOwnProperty("dispose")) dic[name].dispose();
-                delete dic[name];
+                if (dic[key] is Bitmap) dic[key].bitmapData.dispose();
+                if (dic[key].hasOwnProperty("dispose")) dic[key].dispose();
+                delete dic[key];
             }
         }
         
-        
-        public function getByName(name:String):*
+        public function getByName(key:String):*
         {
-            return dic[name];
+            return dic[key];
         }
         
         public function getByNamePrefix(prefix:String):Array
@@ -46,7 +43,7 @@ package com.pcup.utils
             for (var n:String in dic)
                 if (n.substr(0, prefix.length) == prefix)
                     list.push({name:n, data:dic[n]});
-            list.sortOn("name");
+            list.sortOn("key");
             for each (var obj:Object in list)
                 arr.push(obj.data);
             return arr;
@@ -59,8 +56,8 @@ package com.pcup.utils
         
         public function dispose():void
         {
-            for (var name:* in dic) 
-                remove(name);
+            for (var key:* in dic) 
+                remove(key);
         }
         
     }

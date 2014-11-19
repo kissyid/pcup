@@ -4,7 +4,7 @@ package com.pcup.fw
     import com.pcup.fw.hack.Sprite;
     import com.pcup.fw.history.Path;
     import com.pcup.utils.QueueLoader;
-    import com.pcup.utils.Res;
+    import com.pcup.utils.Table;
     
     import flash.display.DisplayObjectContainer;
     import flash.display.Shape;
@@ -70,7 +70,7 @@ package com.pcup.fw
         
         private static var loaderNum:int = 0;
         private var loader:QueueLoader;
-        protected var res:Res = null;
+        protected var res:Table = null;
         protected var enableMouseBaseWhenLoadRes:Boolean = false;
         protected function loadRes(urls:Array):void
         {
@@ -87,7 +87,7 @@ package com.pcup.fw
         protected function onResLoaded(e:DataEvent):void
         {
             removeLoaderListener(loader);
-            res = e.data as Res;
+            res = e.data as Table;
             
             loaderNum--;
             if (!enableMouseBaseWhenLoadRes && loaderNum == 0) mouseBase = true;

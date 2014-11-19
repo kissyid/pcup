@@ -221,7 +221,7 @@ import com.pcup.fw.hack.Sprite;
 import com.pcup.utils.FileUtil;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
-import com.pcup.utils.Res;
+import com.pcup.utils.Table;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -236,7 +236,7 @@ class Page extends Sprite
     public static var viewArea:Rectangle;
     private var loading:TextField;
     private var loader:QueueLoader;
-    private var res:Res;
+    private var res:Table;
     private var _bitmapData:BitmapData = null;
 
     public function Page(url:String)
@@ -271,7 +271,7 @@ class Page extends Sprite
         
         removeChild(loading);
         
-        res = e.data as Res;
+        res = e.data as Table;
         var bmp:Bitmap = res.all[0];
         if (bmp)
         {
