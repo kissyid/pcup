@@ -11,12 +11,14 @@ package com.pcup.display
     public class PageDot extends Sprite 
     {
         private var r:uint;
+        private var g:Number;
         private var c:uint;
         private var dots:Vector.<Shape>;
 
-        public function PageDot(radius:uint = 3, color:uint = 0xFFFFFF) 
+        public function PageDot(radius:uint = 3, gap:Number = 1.0, color:uint = 0xFFFFFF) 
         {
             this.r = radius;
+            this.g = gap + 1;
             this.c = color;
         }
         
@@ -30,7 +32,7 @@ package com.pcup.display
                 s.graphics.beginFill(c);
                 s.graphics.drawCircle(r, r, r);
                 s.graphics.endFill();
-                s.x = i * (s.width * 2);
+                s.x = i * (s.width * g);
                 addChild(s);
                 dots.push(s);
             }
