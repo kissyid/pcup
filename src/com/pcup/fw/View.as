@@ -8,6 +8,7 @@ package com.pcup.fw
     
     import flash.display.DisplayObjectContainer;
     import flash.display.Shape;
+    import flash.display.Stage;
     import flash.events.Event;
     import flash.events.MouseEvent;
     
@@ -17,6 +18,7 @@ package com.pcup.fw
      */
     public class View extends Sprite
     {
+        public static var stg:Stage = null;
         public static var stageW:int = 600;
         public static var stageH:int = 400;
         public static var viewW:int = 600;
@@ -111,8 +113,12 @@ package com.pcup.fw
         public static function set baseView(value:DisplayObjectContainer):void
         {
             _baseView = value;
-            stageW = _baseView.stage.stageWidth;
-            stageH = _baseView.stage.stageHeight;
+            if (baseView.stage)
+            {
+                stg = baseView.stage;
+                stageW = stg.stageWidth;
+                stageH = stg.stageHeight;
+            }
             
             var s:Shape = new Shape();
             s.graphics.beginFill(0);

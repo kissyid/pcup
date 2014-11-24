@@ -37,7 +37,6 @@ package com.pcup.display
             _viewArea = new Rectangle(0, 0, viewWidth, viewHeight);
             
             moveLength = viewArea.width + gap;
-            Page.viewArea = viewArea;
             
             var s:Shape = new Shape();
             s.graphics.beginFill(0);
@@ -123,7 +122,7 @@ package com.pcup.display
                 }
                 if (currentPageIndex - 1 >= 0)
                 {
-                    var page:Page = new Page(urls[currentPageIndex - 1]);
+                    var page:Page = new Page(urls[currentPageIndex - 1], viewArea);
                     page.x = -moveLength;
                     pages.unshift(addChild(page));
                 }
@@ -137,7 +136,7 @@ package com.pcup.display
                 }
                 if (currentPageIndex + 1 < urls.length)
                 {
-                    page = new Page(urls[currentPageIndex + 1]);
+                    page = new Page(urls[currentPageIndex + 1], viewArea);
                     page.x = moveLength;
                     pages.push(addChild(page));
                 }
@@ -152,19 +151,19 @@ package com.pcup.display
             disposePages();
             _currentPageIndex = pageIndex;
             
-            var page:Page = new Page(urls[currentPageIndex]);
+            var page:Page = new Page(urls[currentPageIndex], viewArea);
             pages.push(addChild(page));
             currentPage = page;
             
             if (currentPageIndex - 1 >= 0)
             {
-                page = new Page(urls[currentPageIndex - 1]);
+                page = new Page(urls[currentPageIndex - 1], viewArea);
                 page.x = -moveLength;
                 pages.unshift(addChild(page));
             }
             if (currentPageIndex + 1 < urls.length)
             {
-                page = new Page(urls[currentPageIndex + 1]);
+                page = new Page(urls[currentPageIndex + 1], viewArea);
                 page.x = moveLength;
                 pages.push(addChild(page));
             }
@@ -218,7 +217,6 @@ package com.pcup.display
 
 import com.pcup.fw.events.DataEvent;
 import com.pcup.fw.hack.Sprite;
-import com.pcup.utils.FileUtil;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
 import com.pcup.utils.Table;
@@ -233,14 +231,16 @@ import flash.text.TextFormat;
 
 class Page extends Sprite
 {
-    public static var viewArea:Rectangle;
+    private var viewArea:Rectangle;
     private var loading:TextField;
     private var loader:QueueLoader;
     private var res:Table;
     private var _bitmapData:BitmapData = null;
 
-    public function Page(url:String)
+    public function Page(url:String, viewArea:Rectangle)
     {
+        this.viewArea = viewArea;
+        
         this.graphics.beginFill(0xffffff, .3);
         this.graphics.drawRect(0, 0, viewArea.width, viewArea.height);
         this.graphics.endFill();

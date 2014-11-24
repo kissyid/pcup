@@ -9,6 +9,8 @@
     <classEntry path="com.pcup.utils.DisplayUtil"/>
     <classEntry path="com.pcup.fw.events.TouchEvent"/>
     <classEntry path="com.pcup.fw.errors.SingletonError"/>
+    <classEntry path="com.pcup.utils.Console"/>
+    <classEntry path="com.pcup.fw.errors.AbstractError"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

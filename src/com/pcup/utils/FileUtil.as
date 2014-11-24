@@ -24,15 +24,16 @@ package com.pcup.utils
             return (new File(fileURL)).exists;
         }
         
-        static public function getImageURLsInDirectorys(dirURLs:Array):Array
+        static public function getImageURLsInDirectorys(dirURLs:Array, sort:Boolean = true):Array
         {
             var arr:Array = [];
             for each (var i:* in dirURLs) 
                 arr = arr.concat(getImageURLsInDirecotry(String(i)));
+            if (sort) arr.sort();
             return arr;
         }
         
-        static private function getImageURLsInDirecotry(dirURL:String):Array
+        static private function getImageURLsInDirecotry(dirURL:String, sort:Boolean = true):Array
         {
             var f:File = new File(dirURL);
             if (!f.exists)
@@ -44,10 +45,11 @@ package com.pcup.utils
             var urls:Array = [];
             for each (f in list) if (f.extension && (f.extension.toLowerCase() == "jpg" || f.extension.toLowerCase() == "png"))
                 urls.push(dirURL + "/" + f.name);
+            if (sort) urls.sort();
             return urls;
         }
         
-        static public function getSubDirURLs(dirURL:String):Array
+        static public function getSubDirURLs(dirURL:String, sort:Boolean = true):Array
         {
             var f:File = new File(dirURL);
             if (!f.exists)
@@ -59,6 +61,7 @@ package com.pcup.utils
             var urls:Array = [];
             for each (f in list) if (f.isDirectory)
                 urls.push(dirURL + "/" + f.name);
+            if (sort) urls.sort();
             return urls;
         }
         
