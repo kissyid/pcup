@@ -1,8 +1,8 @@
-package com.pcup.display 
+package com.pcup.display
 {
 	import com.pcup.fw.events.DataEvent;
 	import com.pcup.fw.hack.Sprite;
-	
+
 	import flash.display.Shape;
 	import flash.events.ErrorEvent;
 	import flash.events.IOErrorEvent;
@@ -13,16 +13,16 @@ package com.pcup.display
 	import flash.media.Video;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
-    
-    
+
+
     [Event(name = "error", type = "com.pcup.fw.events.DataEvent")]
     /** video information */
     [Event(name="data" type="com.pcup.fw.events.DataEvent")]
-    
-	
+
+
 	/**
      * Video player
-     * 
+     *
 	 * Demo:
 <listing version="3.0">
 var v:Vdo = new Vdo(600, 400);
@@ -33,9 +33,9 @@ v.open("d:/video/foo.flv");
 
 stage.addEventListener(KeyboardEvent.KEY_DOWN, onDown);
 
-private function onDown(e:KeyboardEvent):void 
+private function onDown(e:KeyboardEvent):void
 {
-    switch (e.keyCode) 
+    switch (e.keyCode)
     {
         case Keyboard.SPACE:
             v.togglePause();
@@ -52,61 +52,61 @@ private function onDown(e:KeyboardEvent):void
         default:
     }
 }
-private function onMeta(e:Event):void 
+private function onMeta(e:Event):void
 {
     trace("video duration:" + v.duration);
 }
 </listing>
-     * 
+     *
      * @author pihao
      */
-    public class Vdo extends Sprite 
+    public class Vdo extends Sprite
     {
         private var video:Video;
 		private var nc:NetConnection;
 		private var ns:NetStream;
-        
+
         private var viewArea:Rectangle;
         private var _duration:Number = 0;
         private var vdoURL:String;
-        
-        
-        public function Vdo(viewWidth:uint = 320, viewHeight:uint = 240) 
+
+
+        public function Vdo(viewWidth:uint = 320, viewHeight:uint = 240)
         {
             viewArea = new Rectangle(0, 0, viewWidth, viewHeight);
-            
+
             var s:Shape = new Shape();
             s.graphics.beginFill(0);
             s.graphics.drawRect(0, 0, viewArea.width, viewArea.height);
             s.graphics.endFill();
             addChild(s);
-            
+
 			video = new Video();
 			video.smoothing = true;
 			addChild(video);
-			
+
 			nc = new NetConnection();
 			nc.client = new Object();
             addNCListenner();
             nc.connect(null);
         }
-        
+
         public function open(vdoURL:String):void
         {
             if (!nc.connected) dispError("no connection");
-            
+
             reset();
-			
+
 			ns = new NetStream(nc);
-			ns.client = new Object(); 
-			ns.client.onMetaData = onMetaData; 
+			ns.client = new Object();
+			ns.client.onMetaData = onMetaData;
             addNSListenner();
 			video.attachNetStream(ns);
-			
+
             this.vdoURL = vdoURL;
 			ns.play(vdoURL);
 		}
-        
+
         private function addNCListenner():void
         {
             nc.addEventListener(IOErrorEvent.IO_ERROR            , errorHandler);
@@ -119,7 +119,7 @@ private function onMeta(e:Event):void
             nc.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
             nc.removeEventListener(NetStatusEvent.NET_STATUS        , netStatusHandler);
         }
-        
+
         private function addNSListenner():void
         {
             ns.addEventListener(IOErrorEvent.IO_ERROR    , errorHandler);
@@ -130,7 +130,7 @@ private function onMeta(e:Event):void
             ns.removeEventListener(IOErrorEvent.IO_ERROR    , errorHandler);
             ns.removeEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
         }
-        
+
         public function play():void
         {
             if (!videoReady) return;
@@ -152,7 +152,7 @@ private function onMeta(e:Event):void
             ns.seek(0);
             ns.pause();
         }
-        
+
         /**
          * specify time to play (unit: second)
          */
@@ -161,10 +161,10 @@ private function onMeta(e:Event):void
             if (!videoReady) return;
             if      (offset < 0        ) offset = 0;
             else if (offset > _duration) offset = _duration;
-            
+
             ns.seek(offset);
         }
-        
+
         /** 0~1 */
         public function get volume():Number
         {
@@ -174,26 +174,26 @@ private function onMeta(e:Event):void
         public function set volume(value:Number):void
         {
             if (!videoReady) return;
-            
+
                  if (value < 0) value = 0;
             else if (value > 1) value = 1;
-            
+
             var st:SoundTransform = ns.soundTransform;
             st.volume = value;
             ns.soundTransform = st;
         }
-        
+
         public function get time():Number
         {
             if (!videoReady) return 0;
             else             return ns.time;
         }
-        
+
         public function get duration():Number
         {
             return _duration;
         }
-        
+
         override public function dispose():void
         {
             super.dispose();
@@ -210,8 +210,8 @@ private function onMeta(e:Event):void
                 ns = null;
             }
         }
-        
-        private function get videoReady():Boolean 
+
+        private function get videoReady():Boolean
         {
             if (!nc.connected)
             {
@@ -223,34 +223,42 @@ private function onMeta(e:Event):void
                 dispError("no open video");
                 return false;
             }
-            
+
             return true;
         }
-        
-        private function reset():void 
+
+        private function reset():void
         {
 			if (ns)
 			{
                 ns.dispose();
 				ns = null;
 			}
-            
+
             video.width  = viewArea.width;
             video.height = viewArea.height;
-            
+
             _duration = 0;
         }
-        
-        
-        private function netStatusHandler(e:NetStatusEvent):void 
+
+
+        private function netStatusHandler(e:NetStatusEvent):void
 		{
-            switch (e.info.code) 
+            switch (e.info.code)
 			{
+                case "NetStream.Play.Start":
+                case "NetStream.Unpause.Notify":
+                    // Start, Unpause
+                    break;
+                break;
+                case "NetStream.Pause.Notify":
+                    // Pause
+                    break;
                 case "NetStream.Play.Stop":
+                    // Play over
                     stop();
                 break;
                 case "NetConnection.Connect.Success":
-                    
                 break;
                 case "NetConnection.Connect.Failed":
                 case "NetConnection.Connect.Rejected":
@@ -264,14 +272,14 @@ private function onMeta(e:Event):void
         /**
          * @param info video information (_duration/width/height/framerate ...)
          */
-        public function onMetaData(info:Object):void 
+        public function onMetaData(info:Object):void
 		{
 			//trace("metadata: _duration=" + info._duration + " width=" + info.width + " height=" + info.height + " framerate=" + info.framerate);
-            
+
 			if (info._duration == 0 || info.width == 0 || info.height == 0) return;
-            
+
             _duration = info.duration;
-            
+
 			if (info.width / info.height > viewArea.width / viewArea.height)
 			{
 				video.width  = viewArea.width;
@@ -280,26 +288,26 @@ private function onMeta(e:Event):void
 				video.height = viewArea.height;
 				video.width  = video.height * (info.width / info.height);
 			}
-            
+
 			video.x = viewArea.x + (viewArea.width - video.width) / 2;
 			video.y = viewArea.y + (viewArea.height - video.height) / 2;
-            
+
             dispatchEvent(new DataEvent(DataEvent.DATA, info));
 		}
-        
-        
-        private function errorHandler(e:ErrorEvent):void 
+
+
+        private function errorHandler(e:ErrorEvent):void
         {
             dispError(e.text);
         }
-        
-        private function dispError(text:String):void 
+
+        private function dispError(text:String):void
         {
             var e:DataEvent = new DataEvent(DataEvent.ERROR);
             e.data = text;
             dispatchEvent(e);
         }
-        
+
     }
 
 }
