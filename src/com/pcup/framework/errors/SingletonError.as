@@ -1,4 +1,4 @@
-package com.pcup.fw.errors
+package com.pcup.framework.errors
 {
     /**
      * @author ph

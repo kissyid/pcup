@@ -1,7 +1,7 @@
 package com.pcup.utils
 {
-    import com.pcup.fw.events.DataEvent;
-    import com.pcup.fw.hack.EventDispatcher;
+    import com.pcup.framework.events.DataEvent;
+    import com.pcup.framework.hack.EventDispatcher;
     
     import flash.display.Loader;
     import flash.events.ErrorEvent;

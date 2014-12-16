@@ -1,6 +1,6 @@
 package com.pcup.utils
 {
-    import com.pcup.fw.hack.Sprite;
+    import com.pcup.framework.hack.Sprite;
     
     import flash.display.Bitmap;
     import flash.display.BitmapData;

@@ -1,7 +1,7 @@
 package com.pcup.display
 {
-    import com.pcup.fw.events.DataEvent;
-    import com.pcup.fw.hack.Sprite;
+    import com.pcup.framework.events.DataEvent;
+    import com.pcup.framework.hack.Sprite;
     import com.pcup.utils.FileUtil;
     import com.pcup.utils.NumberUtil;
     import com.pcup.utils.QueueLoader;

@@ -1,4 +1,4 @@
-package com.pcup.fw.hack
+package com.pcup.framework.hack
 {
     import flash.display.DisplayObject;
     import flash.display.Sprite;

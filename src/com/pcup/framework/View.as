@@ -1,8 +1,8 @@
-package com.pcup.fw
+package com.pcup.framework
 {
-    import com.pcup.fw.events.DataEvent;
-    import com.pcup.fw.hack.Sprite;
-    import com.pcup.fw.history.Path;
+    import com.pcup.framework.events.DataEvent;
+    import com.pcup.framework.hack.Sprite;
+    import com.pcup.framework.history.Path;
     import com.pcup.utils.QueueLoader;
     import com.pcup.utils.Table;
     

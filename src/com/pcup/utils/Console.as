@@ -1,6 +1,6 @@
 package com.pcup.utils
 {
-    import com.pcup.fw.errors.AbstractError;
+    import com.pcup.framework.errors.AbstractError;
     
     import flash.display.Stage;
     import flash.text.TextField;

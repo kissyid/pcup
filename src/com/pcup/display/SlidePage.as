@@ -1,8 +1,8 @@
 package com.pcup.display
 {
     import com.greensock.TweenLite;
-    import com.pcup.fw.events.DataEvent;
-    import com.pcup.fw.hack.Sprite;
+    import com.pcup.framework.events.DataEvent;
+    import com.pcup.framework.hack.Sprite;
     import com.pcup.utils.FileUtil;
     
     import flash.display.BitmapData;
@@ -215,8 +215,8 @@ package com.pcup.display
 }
 
 
-import com.pcup.fw.events.DataEvent;
-import com.pcup.fw.hack.Sprite;
+import com.pcup.framework.events.DataEvent;
+import com.pcup.framework.hack.Sprite;
 import com.pcup.utils.NumberUtil;
 import com.pcup.utils.QueueLoader;
 import com.pcup.utils.Table;

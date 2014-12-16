@@ -1,6 +1,6 @@
 package com.pcup.display 
 {
-    import com.pcup.fw.hack.Sprite;
+    import com.pcup.framework.hack.Sprite;
     
     import flash.display.DisplayObject;
     import flash.events.Event;

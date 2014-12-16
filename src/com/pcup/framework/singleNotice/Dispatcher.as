@@ -1,4 +1,4 @@
-package com.pcup.fw.singleNotice
+package com.pcup.framework.singleNotice
 {
     
     /**

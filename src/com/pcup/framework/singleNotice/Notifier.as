@@ -1,6 +1,6 @@
-package com.pcup.fw.singleNotice
+package com.pcup.framework.singleNotice
 {
-    import com.pcup.fw.events.DataEvent;
+    import com.pcup.framework.events.DataEvent;
     
     import flash.events.EventDispatcher;
     

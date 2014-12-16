@@ -1,6 +1,6 @@
-package com.pcup.fw
+package com.pcup.framework
 {
-    import com.pcup.fw.singleNotice.Dispatcher;
+    import com.pcup.framework.singleNotice.Dispatcher;
     
     /**
      * 

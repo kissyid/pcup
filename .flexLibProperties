@@ -3,14 +3,14 @@
   <includeClasses>
     <classEntry path="com.pcup.display.FaceOff"/>
     <classEntry path="com.pcup.utils.TimeUtil"/>
-    <classEntry path="com.pcup.fw.hack.EventDispatcher"/>
-    <classEntry path="com.pcup.fw.hack.Sprite"/>
+    <classEntry path="com.pcup.framework.hack.EventDispatcher"/>
+    <classEntry path="com.pcup.framework.hack.Sprite"/>
     <classEntry path="com.pcup.utils.StringUtil"/>
     <classEntry path="com.pcup.utils.DisplayUtil"/>
-    <classEntry path="com.pcup.fw.events.TouchEvent"/>
-    <classEntry path="com.pcup.fw.errors.SingletonError"/>
+    <classEntry path="com.pcup.framework.events.TouchEvent"/>
+    <classEntry path="com.pcup.framework.errors.SingletonError"/>
     <classEntry path="com.pcup.utils.Console"/>
-    <classEntry path="com.pcup.fw.errors.AbstractError"/>
+    <classEntry path="com.pcup.framework.errors.AbstractError"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

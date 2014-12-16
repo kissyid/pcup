@@ -1,7 +1,7 @@
 package com.pcup.display
 {
-	import com.pcup.fw.events.DataEvent;
-	import com.pcup.fw.hack.Sprite;
+	import com.pcup.framework.events.DataEvent;
+	import com.pcup.framework.hack.Sprite;
 
 	import flash.display.Shape;
 	import flash.events.ErrorEvent;
@@ -15,7 +15,7 @@ package com.pcup.display
 	import flash.net.NetStream;
 
 
-    [Event(name = "error", type = "com.pcup.fw.events.DataEvent")]
+    [Event(name = "error", type = "com.pcup.framework.events.DataEvent")]
     /** video information */
     [Event(name="data" type="com.pcup.fw.events.DataEvent")]
 
