@@ -11,6 +11,10 @@
     <classEntry path="com.pcup.framework.errors.SingletonError"/>
     <classEntry path="com.pcup.utils.Console"/>
     <classEntry path="com.pcup.framework.errors.AbstractError"/>
+    <classEntry path="com.pcup.utils.FrameScriptManager"/>
+    <classEntry path="flexUnitTests.com.pcup.utils.FrameScriptManagerTest"/>
+    <classEntry path="flexUnitTests.com.pcup.utils.UtilsTestSuite"/>
+    <classEntry path="flexUnitTests.com.pcup.PcupTestSuite"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
